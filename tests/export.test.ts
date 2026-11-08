@@ -19,7 +19,13 @@ describe("static ZIP export", () => {
   it("round-trips ZIP and protects paths from prompt input", async () => {
     const site = generateDemo({ ...validInput, name: "File ../ attack" });
     const blob = await exportZip(site);
-    const zip = await JSZip.loadAsync(await blob.arrayBuffer());
+    const buffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result as ArrayBuffer);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsArrayBuffer(blob);
+    });
+    const zip = await JSZip.loadAsync(buffer);
     expect(Object.keys(zip.files).sort()).toEqual(
       ["README.md", "index.html", "metadata.json", "styles.css"].sort(),
     );

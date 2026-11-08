@@ -1,14 +1,23 @@
 import { websiteSchema, type Section, type Website } from "./schema";
 
 export function escapeHtml(value: string): string {
-  return value.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function actionMarkup(action: Section["action"]): string {
   if (!action) return "";
-  return '<a class="button" href="' + escapeHtml(action.href) + '" rel="noopener noreferrer">' +
-    escapeHtml(action.label) + "</a>";
+  return (
+    '<a class="button" href="' +
+    escapeHtml(action.href) +
+    '" rel="noopener noreferrer">' +
+    escapeHtml(action.label) +
+    "</a>"
+  );
 }
 
 export function renderSection(section: Section, selectedId?: string): string {
@@ -19,27 +28,70 @@ export function renderSection(section: Section, selectedId?: string): string {
   const head = "<" + heading + ">" + title + "</" + heading + ">";
   const text = description ? "<p>" + description + "</p>" : "";
   const items = section.items.length
-    ? '<div class="cards">' + section.items.map((item) =>
-        '<article class="item"><h3>' + escapeHtml(item.heading) + '</h3><p>' +
-        escapeHtml(item.text) + '</p>' +
-        (item.href ? '<a href="' + escapeHtml(item.href) + '" rel="noopener noreferrer">Learn more</a>' : "") +
-        "</article>").join("") + "</div>"
+    ? '<div class="cards">' +
+      section.items
+        .map(
+          (item) =>
+            '<article class="item"><h3>' +
+            escapeHtml(item.heading) +
+            "</h3><p>" +
+            escapeHtml(item.text) +
+            "</p>" +
+            (item.href
+              ? '<a href="' + escapeHtml(item.href) + '" rel="noopener noreferrer">Learn more</a>'
+              : "") +
+            "</article>",
+        )
+        .join("") +
+      "</div>"
     : "";
-  const img = section.image ? '<img loading="lazy" alt="' + escapeHtml(section.image.alt) +
-    '" src="' + escapeHtml(section.image.url) + '">' : "";
-  const tag = section.type === "header" ? "header" : section.type === "footer" ? "footer" : "section";
-  const className = "section section-" + section.type + (selectedId === section.id ? " selected" : "");
-  return "<" + tag + ' id="' + escapeHtml(section.id) + '" class="' + className +
-    '" data-section="' + escapeHtml(section.id) + '">' +
-    '<div class="section-inner">' + head + text + img + items + actionMarkup(section.action) +
-    "</div></" + tag + ">";
+  const img = section.image
+    ? '<img loading="lazy" alt="' +
+      escapeHtml(section.image.alt) +
+      '" src="' +
+      escapeHtml(section.image.url) +
+      '">'
+    : "";
+  const tag =
+    section.type === "header" ? "header" : section.type === "footer" ? "footer" : "section";
+  const className =
+    "section section-" + section.type + (selectedId === section.id ? " selected" : "");
+  return (
+    "<" +
+    tag +
+    ' id="' +
+    escapeHtml(section.id) +
+    '" class="' +
+    className +
+    '" data-section="' +
+    escapeHtml(section.id) +
+    '">' +
+    '<div class="section-inner">' +
+    head +
+    text +
+    img +
+    items +
+    actionMarkup(section.action) +
+    "</div></" +
+    tag +
+    ">"
+  );
 }
 
 export function staticCss(site: Website): string {
   const p = site.palette;
   return [
-    ":root{color-scheme:light;--bg:" + p.background + ";--surface:" + p.surface + ";--text:" + p.text +
-      ";--primary:" + p.primary + ";--accent:" + p.accent + ";}",
+    ":root{color-scheme:light;--bg:" +
+      p.background +
+      ";--surface:" +
+      p.surface +
+      ";--text:" +
+      p.text +
+      ";--primary:" +
+      p.primary +
+      ";--accent:" +
+      p.accent +
+      ";}",
     "*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,Segoe UI,sans-serif;line-height:1.6}",
     "a{color:var(--primary)}a:focus-visible{outline:3px solid var(--primary);outline-offset:4px}",
     ".section{padding:68px 24px}.section-inner{max-width:1060px;margin:0 auto}.section h1,.section h2,.section h3{letter-spacing:-.035em;line-height:1.12}",
@@ -63,11 +115,20 @@ export function staticCss(site: Website): string {
 export function renderWebsite(site: Website, selectedId?: string): string {
   const safeSite = websiteSchema.parse(site);
   const lang = safeSite.language === "pt-BR" ? "pt-BR" : safeSite.language;
-  return '<!doctype html><html lang="' + lang + '"><head><meta charset="utf-8">' +
+  return (
+    '<!doctype html><html lang="' +
+    lang +
+    '"><head><meta charset="utf-8">' +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<meta name="description" content="' + escapeHtml(safeSite.description.slice(0, 160)) + '">' +
-    '<title>' + escapeHtml(safeSite.name) + '</title><style>' +
-    staticCss(safeSite) + '</style></head><body>' +
+    '<meta name="description" content="' +
+    escapeHtml(safeSite.description.slice(0, 160)) +
+    '">' +
+    "<title>" +
+    escapeHtml(safeSite.name) +
+    "</title><style>" +
+    staticCss(safeSite) +
+    "</style></head><body>" +
     safeSite.sections.map((section) => renderSection(section, selectedId)).join("\n") +
-    "</body></html>";
+    "</body></html>"
+  );
 }

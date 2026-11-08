@@ -101,7 +101,8 @@ export function GeneratorStudio() {
       const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
       setSite(saved.current);
       setHistory(saved.history);
-      if (saved.current) setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
+      if (saved.current)
+        setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
       setHydrated(true);
     }, 0);
     return () => window.clearTimeout(handle);
@@ -256,7 +257,9 @@ export function GeneratorStudio() {
   const acceptCandidate = () => {
     if (!candidate) return;
     if (applySite(candidate)) {
-      setHistory((current) => addSnapshot(current, makeSnapshot(candidate, "Accepted regeneration")));
+      setHistory((current) =>
+        addSnapshot(current, makeSnapshot(candidate, "Accepted regeneration")),
+      );
       setCandidate(null);
       setInstruction("");
       setNotice("Regeneration accepted and versioned.");
@@ -283,7 +286,9 @@ export function GeneratorStudio() {
     <main className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="mark" aria-hidden="true">W</span>
+          <span className="mark" aria-hidden="true">
+            W
+          </span>
           <span>Website Studio</span>
         </div>
         <div className="top-meta">
@@ -296,7 +301,9 @@ export function GeneratorStudio() {
         <section className="panel" aria-labelledby="create-heading">
           <span className="eyebrow">01 / Create</span>
           <h2 id="create-heading">Describe your website</h2>
-          <p className="lead">Start from a prompt and shape your site with a safe component catalog.</p>
+          <p className="lead">
+            Start from a prompt and shape your site with a safe component catalog.
+          </p>
           <form onSubmit={onGenerate}>
             <Field
               id="site-name"
@@ -322,7 +329,9 @@ export function GeneratorStudio() {
                 }
               >
                 {categories.map((category) => (
-                  <option key={category} value={category}>{displayName(category)}</option>
+                  <option key={category} value={category}>
+                    {displayName(category)}
+                  </option>
                 ))}
               </select>
             </div>
@@ -336,7 +345,9 @@ export function GeneratorStudio() {
                 }
               >
                 {themes.map((theme) => (
-                  <option key={theme} value={theme}>{themeLabels[theme]}</option>
+                  <option key={theme} value={theme}>
+                    {themeLabels[theme]}
+                  </option>
                 ))}
               </select>
             </div>
@@ -350,7 +361,9 @@ export function GeneratorStudio() {
                 }
               >
                 {languages.map((language) => (
-                  <option key={language} value={language}>{language}</option>
+                  <option key={language} value={language}>
+                    {language}
+                  </option>
                 ))}
               </select>
             </div>
@@ -387,18 +400,33 @@ export function GeneratorStudio() {
               {busy ? "Generating..." : "Generate website"}
             </button>
           </form>
-          {error && <p className="error" role="alert">{error}</p>}
-          {notice && <p className="success" role="status">{notice}</p>}
+          {error && (
+            <p className="error" role="alert">
+              {error}
+            </p>
+          )}
+          {notice && (
+            <p className="success" role="status">
+              {notice}
+            </p>
+          )}
           <div className="separator" />
           <div className="button-row">
-            <button className="secondary small" type="button" onClick={saveVersion} disabled={!site}>
+            <button
+              className="secondary small"
+              type="button"
+              onClick={saveVersion}
+              disabled={!site}
+            >
               Save version
             </button>
             <button className="ghost small" type="button" onClick={onExport} disabled={!site}>
               Export ZIP
             </button>
           </div>
-          <p className="note">Changes auto-save locally in this browser. No account or cloud sync.</p>
+          <p className="note">
+            Changes auto-save locally in this browser. No account or cloud sync.
+          </p>
         </section>
 
         <section aria-labelledby="preview-heading">
@@ -407,8 +435,11 @@ export function GeneratorStudio() {
               <span className="eyebrow">02 / Preview</span>
               <h1 id="preview-heading">{showing ? showing.name : "Your canvas awaits"}</h1>
               <p>
-                {candidate ? "Proposed regeneration, not yet applied" :
-                  showing ? "Responsive preview in a sandboxed frame" : "Generate a site to see the preview"}
+                {candidate
+                  ? "Proposed regeneration, not yet applied"
+                  : showing
+                    ? "Responsive preview in a sandboxed frame"
+                    : "Generate a site to see the preview"}
               </p>
             </div>
             {showing && <span className="pill">{displayName(showing.category)}</span>}
@@ -444,7 +475,9 @@ export function GeneratorStudio() {
               </div>
             ) : (
               <div className="empty-state">
-                <div className="illustration" aria-hidden="true">✦</div>
+                <div className="illustration" aria-hidden="true">
+                  ✦
+                </div>
                 <h2>From words to a website</h2>
                 <p>Choose a category, enter your prompt and generate a responsive preview.</p>
               </div>
@@ -476,7 +509,9 @@ export function GeneratorStudio() {
         <aside className="panel" aria-labelledby="editor-heading">
           <span className="eyebrow">03 / Edit</span>
           <h2 id="editor-heading">Visual editor</h2>
-          <p className="lead">Edit content and reorder sections without executing generated code.</p>
+          <p className="lead">
+            Edit content and reorder sections without executing generated code.
+          </p>
           {site ? (
             <>
               <div className="field">
@@ -490,13 +525,19 @@ export function GeneratorStudio() {
                   }}
                 >
                   {themes.map((theme) => (
-                    <option key={theme} value={theme}>{themeLabels[theme]}</option>
+                    <option key={theme} value={theme}>
+                      {themeLabels[theme]}
+                    </option>
                   ))}
                 </select>
               </div>
               <div className="button-row" style={{ marginBottom: 14 }}>
                 {(["background", "text", "primary", "accent"] as const).map((color) => (
-                  <div className="field" key={color} style={{ width: "calc(50% - 5px)", margin: 0 }}>
+                  <div
+                    className="field"
+                    key={color}
+                    style={{ width: "calc(50% - 5px)", margin: 0 }}
+                  >
                     <label htmlFor={"color-" + color}>{displayName(color)}</label>
                     <input
                       id={"color-" + color}
@@ -513,7 +554,9 @@ export function GeneratorStudio() {
                 ))}
               </div>
               <div className="separator" />
-              <div className="field-label" style={{ marginBottom: 12 }}>Sections</div>
+              <div className="field-label" style={{ marginBottom: 12 }}>
+                Sections
+              </div>
               <div className="section-list">
                 {site.sections.map((section) => (
                   <div className="section-entry" key={section.id}>
@@ -524,7 +567,8 @@ export function GeneratorStudio() {
                     >
                       {section.title}
                       <span className="section-meta">
-                        {displayName(section.type)}{section.hidden ? " · Hidden" : ""}
+                        {displayName(section.type)}
+                        {section.hidden ? " · Hidden" : ""}
                       </span>
                     </button>
                     {selectedId === section.id && (
@@ -549,7 +593,9 @@ export function GeneratorStudio() {
                   onChange={(event) => setNewSectionType(event.target.value as SectionType)}
                 >
                   {sectionTypes.map((type) => (
-                    <option key={type} value={type}>{displayName(type)}</option>
+                    <option key={type} value={type}>
+                      {displayName(type)}
+                    </option>
                   ))}
                 </select>
               </div>
@@ -642,15 +688,22 @@ export function GeneratorStudio() {
                       id="section-image-alt"
                       label="Image alternative text"
                       value={selected.image.alt}
-                      onChange={(value) => updateSection({ image: { ...selected.image!, alt: value } })}
+                      onChange={(value) =>
+                        updateSection({ image: { ...selected.image!, alt: value } })
+                      }
                     />
                   )}
                   <button
                     className="ghost small"
                     type="button"
-                    onClick={() => updateSection({
-                      image: { url: "https://placehold.co/1200x630/png", alt: "Illustrative placeholder" },
-                    })}
+                    onClick={() =>
+                      updateSection({
+                        image: {
+                          url: "https://placehold.co/1200x630/png",
+                          alt: "Illustrative placeholder",
+                        },
+                      })
+                    }
                   >
                     Use placeholder image
                   </button>
@@ -740,7 +793,9 @@ export function GeneratorStudio() {
                   >
                     {busy ? "Working..." : "Propose change"}
                   </button>
-                  <p className="note">Only the selected section can change. Review before accepting.</p>
+                  <p className="note">
+                    Only the selected section can change. Review before accepting.
+                  </p>
                 </>
               )}
               <div className="separator" />
@@ -748,34 +803,38 @@ export function GeneratorStudio() {
               <p className="lead">Up to 15 local checkpoints. Restore any saved version.</p>
               {history.length > 0 && (
                 <p className="note">
-                  Comparison with latest checkpoint: {
-                    site.sections.filter((section) =>
-                      JSON.stringify(section) !== JSON.stringify(
-                        history[0].site.sections.find((old) => old.id === section.id),
-                      ),
-                    ).length +
-                    history[0].site.sections.filter((old) =>
-                      !site.sections.some((section) => section.id === old.id),
-                    ).length
-                  } added, removed or modified sections.
+                  Comparison with latest checkpoint:{" "}
+                  {site.sections.filter(
+                    (section) =>
+                      JSON.stringify(section) !==
+                      JSON.stringify(history[0].site.sections.find((old) => old.id === section.id)),
+                  ).length +
+                    history[0].site.sections.filter(
+                      (old) => !site.sections.some((section) => section.id === old.id),
+                    ).length}{" "}
+                  added, removed or modified sections.
                 </p>
               )}
               <div className="history-list">
-                {history.length ? history.map((snapshot) => (
-                  <div className="history-entry" key={snapshot.id}>
-                    <div>
-                      <strong>{snapshot.description}</strong>
-                      <span>{new Date(snapshot.createdAt).toLocaleString()}</span>
+                {history.length ? (
+                  history.map((snapshot) => (
+                    <div className="history-entry" key={snapshot.id}>
+                      <div>
+                        <strong>{snapshot.description}</strong>
+                        <span>{new Date(snapshot.createdAt).toLocaleString()}</span>
+                      </div>
+                      <button
+                        className="ghost small"
+                        type="button"
+                        onClick={() => restoreVersion(snapshot)}
+                      >
+                        Restore
+                      </button>
                     </div>
-                    <button
-                      className="ghost small"
-                      type="button"
-                      onClick={() => restoreVersion(snapshot)}
-                    >
-                      Restore
-                    </button>
-                  </div>
-                )) : <p className="note">No checkpoints saved.</p>}
+                  ))
+                ) : (
+                  <p className="note">No checkpoints saved.</p>
+                )}
               </div>
             </>
           ) : (

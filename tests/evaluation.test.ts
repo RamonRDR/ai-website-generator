@@ -15,7 +15,8 @@ describe("20 deterministic regression scenarios (NOT live LLM evaluation)", () =
         const html = renderWebsite(site);
         const files = exportFiles(site);
         return {
-          valid: true, rendered: html.includes("<!doctype html>"),
+          valid: true,
+          rendered: html.includes("<!doctype html>"),
           exported: files["index.html"].length > 100,
           durationMs: performance.now() - begin,
         };

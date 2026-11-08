@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { generateDemo, regenerateDemo } from "../src/domain/demo";
-import {
-  categories,
-  themes,
-  languages,
-  websiteSchema,
-} from "../src/domain/schema";
+import { categories, themes, languages, websiteSchema } from "../src/domain/schema";
 import { validInput } from "./fixtures";
 
 describe("deterministic demo", () => {

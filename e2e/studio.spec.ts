@@ -7,7 +7,10 @@ test("generate, preview, edit, checkpoint and switch device", async ({ page }) =
   await expect(page.getByTitle("Website preview")).toBeVisible();
   await expect(page.getByText("Deterministic demo created.", { exact: false })).toBeVisible();
   await page.getByRole("button", { name: "Mobile" }).click();
-  await expect(page.getByRole("button", { name: "Mobile" })).toHaveAttribute("aria-pressed", "true");
+  await expect(page.getByRole("button", { name: "Mobile" })).toHaveAttribute(
+    "aria-pressed",
+    "true",
+  );
   await page.getByLabel("Heading").fill("A fresh creative studio");
   await expect(page.getByLabel("Heading")).toHaveValue("A fresh creative studio");
   await page.getByRole("button", { name: "Save version" }).click();

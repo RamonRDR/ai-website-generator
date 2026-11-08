@@ -15,10 +15,14 @@ export async function POST(request: Request) {
     if (!result.success) {
       return NextResponse.json({ error: "Invalid regeneration request." }, { status: 400 });
     }
-    const site = result.data.mode === "demo"
-      ? regenerateDemo(result.data.site, result.data.sectionId, result.data.instruction)
-      : await regenerateLive(result.data);
-    return NextResponse.json({ site, mode: result.data.mode }, { headers: { "Cache-Control": "no-store" } });
+    const site =
+      result.data.mode === "demo"
+        ? regenerateDemo(result.data.site, result.data.sectionId, result.data.instruction)
+        : await regenerateLive(result.data);
+    return NextResponse.json(
+      { site, mode: result.data.mode },
+      { headers: { "Cache-Control": "no-store" } },
+    );
   } catch (error) {
     if (error instanceof ProviderError) {
       return NextResponse.json({ error: error.message }, { status: error.status });

@@ -1,11 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { generateDemo } from "../src/domain/demo";
-import {
-  safeHref,
-  sectionSchema,
-  websiteSchema,
-  generateInputSchema,
-} from "../src/domain/schema";
+import { safeHref, sectionSchema, websiteSchema, generateInputSchema } from "../src/domain/schema";
 import { validInput } from "./fixtures";
 
 describe("schema allowlists and validation", () => {
@@ -16,14 +11,24 @@ describe("schema allowlists and validation", () => {
     expect(safeHref("mailto:hello@example.org")).toBe(true);
   });
 
-  it.each(["javascript:alert(1)", "data:text/html,evil", "//evil.com", "http://user:pass@host.test", "\nhttps://ok.test"])(
-    "blocks unsafe link: %s",
-    (value) => expect(safeHref(value)).toBe(false),
-  );
+  it.each([
+    "javascript:alert(1)",
+    "data:text/html,evil",
+    "//evil.com",
+    "http://user:pass@host.test",
+    "\nhttps://ok.test",
+  ])("blocks unsafe link: %s", (value) => expect(safeHref(value)).toBe(false));
 
   it("rejects unknown components and arbitrary code", () => {
-    expect(sectionSchema.safeParse({ ...generateDemo(validInput).sections[0], type: "script" }).success).toBe(false);
-    expect(sectionSchema.safeParse({ ...generateDemo(validInput).sections[0], html: "<script>alert(1)</script>" }).success).toBe(false);
+    expect(
+      sectionSchema.safeParse({ ...generateDemo(validInput).sections[0], type: "script" }).success,
+    ).toBe(false);
+    expect(
+      sectionSchema.safeParse({
+        ...generateDemo(validInput).sections[0],
+        html: "<script>alert(1)</script>",
+      }).success,
+    ).toBe(false);
   });
 
   it("rejects repeated section ids and unsafe images", () => {
@@ -36,7 +41,9 @@ describe("schema allowlists and validation", () => {
   });
 
   it("rejects oversized prompts and unexpected parameters", () => {
-    expect(generateInputSchema.safeParse({ ...validInput, prompt: "x".repeat(2000) }).success).toBe(false);
+    expect(generateInputSchema.safeParse({ ...validInput, prompt: "x".repeat(2000) }).success).toBe(
+      false,
+    );
     expect(generateInputSchema.safeParse({ ...validInput, executeCode: true }).success).toBe(false);
   });
 });

@@ -2,15 +2,15 @@
 
 These are **illustrative demo inputs**, not evidence of successful live LLM requests.
 
-| Category | Suggested business name | Prompt |
-| --- | --- | --- |
-| Business | Northstar Studio | A modern professional homepage for a small design and technology studio |
-| Portfolio | Ana Portfolio | A clean portfolio for a frontend developer, emphasizing projects and experience |
-| Institutional | Community Hub | An approachable institutional website for a nonprofit community initiative |
-| Product | Focus Notes | A clear landing page for a note-taking productivity application |
-| Services | Bright Repairs | A services website for a small home maintenance company |
-| Event | Makers Weekend | An energetic event page for a local maker festival |
-| Restaurant | Willow Café | A warm cafe website with concept, menu highlights and location placeholders |
+| Category      | Suggested business name | Prompt                                                                          |
+| ------------- | ----------------------- | ------------------------------------------------------------------------------- |
+| Business      | Northstar Studio        | A modern professional homepage for a small design and technology studio         |
+| Portfolio     | Ana Portfolio           | A clean portfolio for a frontend developer, emphasizing projects and experience |
+| Institutional | Community Hub           | An approachable institutional website for a nonprofit community initiative      |
+| Product       | Focus Notes             | A clear landing page for a note-taking productivity application                 |
+| Services      | Bright Repairs          | A services website for a small home maintenance company                         |
+| Event         | Makers Weekend          | An energetic event page for a local maker festival                              |
+| Restaurant    | Willow Café             | A warm cafe website with concept, menu highlights and location placeholders     |
 
 Try switching among Ocean, Sunset, Forest and Mono themes and English, Brazilian Portuguese and Spanish. All business facts should be replaced by confirmed information before publication.
 

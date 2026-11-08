@@ -5,16 +5,28 @@ import { renderWebsite, staticCss } from "./render";
 export function exportFiles(site: Website): Record<string, string> {
   const valid = websiteSchema.parse(site);
   // All output paths are constants, not user-controlled.
-  const html = renderWebsite(valid).replace(/<style>[\s\S]*?<\/style>/, '<link rel="stylesheet" href="./styles.css">');
+  const html = renderWebsite(valid).replace(
+    /<style>[\s\S]*?<\/style>/,
+    '<link rel="stylesheet" href="./styles.css">',
+  );
   return {
     "index.html": html,
     "styles.css": staticCss(valid),
-    "README.md": "# Exported Website\n\nOpen index.html in a browser.\n\n" +
+    "README.md":
+      "# Exported Website\n\nOpen index.html in a browser.\n\n" +
       "Static HTML and CSS only. Demo placeholders must be replaced and links verified before publishing.\n",
-    "metadata.json": JSON.stringify({
-      name: valid.name, description: valid.description, language: valid.language,
-      category: valid.category, schemaVersion: valid.schemaVersion,
-    }, null, 2) + "\n",
+    "metadata.json":
+      JSON.stringify(
+        {
+          name: valid.name,
+          description: valid.description,
+          language: valid.language,
+          category: valid.category,
+          schemaVersion: valid.schemaVersion,
+        },
+        null,
+        2,
+      ) + "\n",
   };
 }
 

@@ -8,8 +8,10 @@ describe("local version history", () => {
     const site = generateDemo(validInput);
     expect(loadState(JSON.stringify({ current: site, history: [] })).current).toEqual(site);
     expect(loadState("{bad json")).toEqual({ current: null, history: [] });
-    expect(loadState(JSON.stringify({ current: { html: "<script>" }, history: [] })))
-      .toEqual({ current: null, history: [] });
+    expect(loadState(JSON.stringify({ current: { html: "<script>" }, history: [] }))).toEqual({
+      current: null,
+      history: [],
+    });
   });
 
   it("enforces history retention limit", () => {
@@ -17,7 +19,10 @@ describe("local version history", () => {
     let history: ReturnType<typeof addSnapshot> = [];
     for (let i = 0; i < 20; i++) {
       history = addSnapshot(history, {
-        id: String(i), createdAt: "2026-11-08", description: "Version " + i, site,
+        id: String(i),
+        createdAt: "2026-11-08",
+        description: "Version " + i,
+        site,
       });
     }
     expect(history).toHaveLength(MAX_VERSIONS);

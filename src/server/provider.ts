@@ -7,7 +7,10 @@ import {
 } from "../domain/schema";
 
 export class ProviderError extends Error {
-  constructor(message: string, readonly status = 502) {
+  constructor(
+    message: string,
+    readonly status = 502,
+  ) {
     super(message);
     this.name = "ProviderError";
   }
@@ -72,8 +75,8 @@ async function completeJson(system: string, user: string): Promise<Website> {
     throw new ProviderError("The live provider could not complete the request.", 502);
   }
   const json: unknown = await response.json().catch(() => ({}));
-  const content = (json as { choices?: { message?: { content?: unknown } }[] })
-    .choices?.[0]?.message?.content;
+  const content = (json as { choices?: { message?: { content?: unknown } }[] }).choices?.[0]
+    ?.message?.content;
   if (typeof content !== "string" || content.length > 100000) {
     throw new ProviderError("The provider returned an invalid response.");
   }
@@ -86,25 +89,39 @@ async function completeJson(system: string, user: string): Promise<Website> {
 
 export async function generateLive(input: GenerateInput): Promise<Website> {
   const user = JSON.stringify({
-    name: input.name, prompt: input.prompt, goal: input.goal, audience: input.audience,
-    theme: input.theme, category: input.category, language: input.language,
+    name: input.name,
+    prompt: input.prompt,
+    goal: input.goal,
+    audience: input.audience,
+    theme: input.theme,
+    category: input.category,
+    language: input.language,
   });
   return completeJson(SYSTEM, "Create one website using these requirements: " + user);
 }
 
 export async function regenerateLive(input: RegenerateInput): Promise<Website> {
   const candidate = await completeJson(
-    SYSTEM + " Change only section " + input.sectionId + " from the provided website. " +
+    SYSTEM +
+      " Change only section " +
+      input.sectionId +
+      " from the provided website. " +
       "Preserve all other sections and metadata.",
-    JSON.stringify({ website: input.site, instruction: input.instruction, sectionId: input.sectionId }),
+    JSON.stringify({
+      website: input.site,
+      instruction: input.instruction,
+      sectionId: input.sectionId,
+    }),
   );
   const replacement = candidate.sections.find((section) => section.id === input.sectionId);
   if (!replacement) throw new ProviderError("The modified section was not returned.");
   // Enforce server-side scope even if the model ignored the instruction.
   return websiteSchema.parse({
     ...input.site,
-    sections: input.site.sections.map((section) => section.id === input.sectionId
-      ? { ...replacement, id: section.id, type: section.type }
-      : section),
+    sections: input.site.sections.map((section) =>
+      section.id === input.sectionId
+        ? { ...replacement, id: section.id, type: section.type }
+        : section,
+    ),
   });
 }

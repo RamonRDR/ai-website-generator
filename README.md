@@ -9,19 +9,19 @@ A Next.js and TypeScript website studio that turns natural-language requirements
 
 ## What works
 
-| Feature | Approach |
-| --- | --- |
-| Natural-language input | Prompt, category, project name, audience, goal, theme, language |
-| Website categories | Business, portfolio, institutional, product, services, event, restaurant |
-| Structured generation | Versioned Zod website schema, bounded text and allowlisted sections |
-| Built-in themes | Ocean, Sunset, Forest, Mono; editable safe hex palette |
-| Responsive preview | Sandboxed iframe; desktop and 390px mobile |
-| Visual editing | Headings, descriptions, actions, cards, visibility, ordering, adding/removing sections |
-| Scoped regeneration | Candidate changes limited to selected section; accept or reject |
-| Version history | Local browser storage, capped at 15 checkpoints, manual restore |
-| Export | Standalone HTML, CSS, metadata and instructions packed as ZIP |
-| Optional live LLM | Server-only OpenAI-compatible chat completions with JSON schema output, then Zod validation |
-| Quality | Vitest, React Testing Library, Playwright, 20 synthetic evaluation prompts, GitHub Actions |
+| Feature                | Approach                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------- |
+| Natural-language input | Prompt, category, project name, audience, goal, theme, language                             |
+| Website categories     | Business, portfolio, institutional, product, services, event, restaurant                    |
+| Structured generation  | Versioned Zod website schema, bounded text and allowlisted sections                         |
+| Built-in themes        | Ocean, Sunset, Forest, Mono; editable safe hex palette                                      |
+| Responsive preview     | Sandboxed iframe; desktop and 390px mobile                                                  |
+| Visual editing         | Headings, descriptions, actions, cards, visibility, ordering, adding/removing sections      |
+| Scoped regeneration    | Candidate changes limited to selected section; accept or reject                             |
+| Version history        | Local browser storage, capped at 15 checkpoints, manual restore                             |
+| Export                 | Standalone HTML, CSS, metadata and instructions packed as ZIP                               |
+| Optional live LLM      | Server-only OpenAI-compatible chat completions with JSON schema output, then Zod validation |
+| Quality                | Vitest, React Testing Library, Playwright, 20 synthetic evaluation prompts, GitHub Actions  |
 
 The renderer does not evaluate arbitrary JavaScript, dynamic JSX, user HTML, or model-generated CSS.
 

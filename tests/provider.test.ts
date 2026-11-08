@@ -18,11 +18,13 @@ describe("paid provider guardrails", () => {
 
   it("also guards live regeneration when disabled", async () => {
     vi.stubEnv("LLM_ENABLED", "false");
-    await expect(regenerateLive({
-      site: generateDemo(validInput),
-      instruction: "Make the about text more concise",
-      sectionId: "about",
-      mode: "live",
-    })).rejects.toThrow("disabled");
+    await expect(
+      regenerateLive({
+        site: generateDemo(validInput),
+        instruction: "Make the about text more concise",
+        sectionId: "about",
+        mode: "live",
+      }),
+    ).rejects.toThrow("disabled");
   });
 });

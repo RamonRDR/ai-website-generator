@@ -19,7 +19,7 @@ describe("studio components", () => {
       ok: true,
       json: async () => ({ site: generateDemo(validInput), mode: "demo" }),
     }));
-    globalThis.fetch = mock as typeof fetch;
+    globalThis.fetch = mock as unknown as typeof fetch;
     try {
       render(<GeneratorStudio />);
       fireEvent.click(screen.getByRole("button", { name: "Generate website" }));

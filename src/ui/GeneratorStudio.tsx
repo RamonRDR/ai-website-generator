@@ -96,11 +96,15 @@ export function GeneratorStudio() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
-    setSite(saved.current);
-    setHistory(saved.history);
-    if (saved.current) setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
-    setHydrated(true);
+    // Defer reading browser-only storage until after the initial hydration paint.
+    const handle = window.setTimeout(() => {
+      const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
+      setSite(saved.current);
+      setHistory(saved.history);
+      if (saved.current) setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
+      setHydrated(true);
+    }, 0);
+    return () => window.clearTimeout(handle);
   }, []);
 
   useEffect(() => {
@@ -614,6 +618,42 @@ export function GeneratorStudio() {
                       + Add button
                     </button>
                   )}
+                  <div className="separator" />
+                  <div className="field">
+                    <label htmlFor="section-image-url">Image URL (approved HTTPS hosts)</label>
+                    <input
+                      id="section-image-url"
+                      key={selected.id + (selected.image?.url ?? "")}
+                      type="url"
+                      defaultValue={selected.image?.url ?? ""}
+                      placeholder="https://placehold.co/1200x630/png"
+                      onBlur={(event) => {
+                        const url = event.target.value.trim();
+                        updateSection({
+                          image: url
+                            ? { url, alt: selected.image?.alt ?? "Illustrative image" }
+                            : undefined,
+                        });
+                      }}
+                    />
+                  </div>
+                  {selected.image && (
+                    <Field
+                      id="section-image-alt"
+                      label="Image alternative text"
+                      value={selected.image.alt}
+                      onChange={(value) => updateSection({ image: { ...selected.image!, alt: value } })}
+                    />
+                  )}
+                  <button
+                    className="ghost small"
+                    type="button"
+                    onClick={() => updateSection({
+                      image: { url: "https://placehold.co/1200x630/png", alt: "Illustrative placeholder" },
+                    })}
+                  >
+                    Use placeholder image
+                  </button>
                   {selected.items.map((item, index) => (
                     <div key={index} style={{ marginTop: 14 }}>
                       <p className="field-label">Card {index + 1}</p>
@@ -706,6 +746,20 @@ export function GeneratorStudio() {
               <div className="separator" />
               <h2>Version history</h2>
               <p className="lead">Up to 15 local checkpoints. Restore any saved version.</p>
+              {history.length > 0 && (
+                <p className="note">
+                  Comparison with latest checkpoint: {
+                    site.sections.filter((section) =>
+                      JSON.stringify(section) !== JSON.stringify(
+                        history[0].site.sections.find((old) => old.id === section.id),
+                      ),
+                    ).length +
+                    history[0].site.sections.filter((old) =>
+                      !site.sections.some((section) => section.id === old.id),
+                    ).length
+                  } added, removed or modified sections.
+                </p>
+              )}
               <div className="history-list">
                 {history.length ? history.map((snapshot) => (
                   <div className="history-entry" key={snapshot.id}>

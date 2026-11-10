@@ -17,14 +17,14 @@
 [![JSZip: 3.10.2](https://img.shields.io/static/v1?label=JSZip&message=3.10.2&color=5b58b7)](https://stuk.github.io/jszip/)
 [![OpenAI API: optional adapter](https://img.shields.io/static/v1?label=OpenAI%20API&message=optional%20adapter&color=777777)](docs/SECURITY.md)
 
-[![Vitest: 25 passing](https://img.shields.io/static/v1?label=Vitest&message=25%20passing&color=248a3d)](https://vitest.dev/)
-[![Playwright E2E: 3 passing](https://img.shields.io/static/v1?label=Playwright%20E2E&message=3%20passing&color=248a3d)](https://playwright.dev/)
+[![Vitest: 32 passing](https://img.shields.io/static/v1?label=Vitest&message=32%20passing&color=248a3d)](https://vitest.dev/)
+[![Playwright E2E: 7 passing](https://img.shields.io/static/v1?label=Playwright%20E2E&message=7%20passing&color=248a3d)](https://playwright.dev/)
 [![React Testing Library: 16.3.3](https://img.shields.io/static/v1?label=React%20Testing%20Library&message=16.3.3&color=d33c4d)](https://testing-library.com/docs/react-testing-library/intro/)
 [![jest-dom: 6.9.1](https://img.shields.io/static/v1?label=jest-dom&message=6.9.1&color=d33c4d)](https://github.com/testing-library/jest-dom)
 [![ESLint: 9.39.5 checked](https://img.shields.io/static/v1?label=ESLint&message=9.39.5%20checked&color=4b32c3)](https://eslint.org/)
 [![Prettier: 3.9.10 checked](https://img.shields.io/static/v1?label=Prettier&message=3.9.10%20checked&color=f7b93e)](https://prettier.io/)
 [![Typecheck: strict passing](https://img.shields.io/static/v1?label=Typecheck&message=strict%20passing&color=3178c6)](tsconfig.json)
-[![Next build: passing](https://img.shields.io/static/v1?label=Next%20build&message=passing&color=248a3d)](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780)
+[![Next build: passing](https://img.shields.io/static/v1?label=Next%20build&message=passing&color=248a3d)](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986)
 [![Demo eval: 20 fixtures](https://img.shields.io/static/v1?label=Demo%20eval&message=20%20fixtures&color=5665a8)](docs/EVALUATION.md)
 [![Vite: 7.3.7 test tooling](https://img.shields.io/static/v1?label=Vite&message=7.3.7%20test%20tooling&color=646cff)](https://vite.dev/)
 [![jsdom: 27.4.0](https://img.shields.io/static/v1?label=jsdom&message=27.4.0&color=556677)](https://github.com/jsdom/jsdom)
@@ -36,7 +36,7 @@
 
 </div>
 
-> **Estado del proyecto:** MVP implementado en [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1) (borrador, sin fusión). La ejecución de referencia [42505766780](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780) pasó. El badge CI sigue la rama de desarrollo hasta la fusión. No se solicitó revisión de Codex ni se realizó despliegue.
+> **Estado del proyecto:** MVP implementado en [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1) (abierto para revisión, sin fusión). La ejecución de referencia [42845816986](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986) pasó. El badge CI sigue la rama de desarrollo hasta la fusión. La primera revisión de Codex detectó tres problemas, corregidos en esta rama para una nueva validación. No hubo despliegue.
 
 ## Descripción general
 
@@ -132,7 +132,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-**Verificado en la ejecución [42505766780](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780):** 25/25 pruebas Vitest aprobadas en 8 archivos; 3/3 pruebas Playwright E2E aprobadas; **0 fallos y 0 omitidas**. `npm run evaluate` vuelve a ejecutar **una** prueba ya incluida en las 25. Esa prueba valida **20 escenarios sintéticos deterministas**, no 20 pruebas adicionales ni la precisión de un LLM real.
+**Verificado en la ejecución [42845816986](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986):** 32/32 pruebas Vitest aprobadas en 9 archivos; 7/7 pruebas Playwright E2E aprobadas; **0 fallos y 0 omitidas**. `npm run evaluate` vuelve a ejecutar **una** prueba ya incluida en las 32. Esa prueba valida **20 escenarios sintéticos deterministas**, no 20 pruebas adicionales ni la precisión de un LLM real.
 
 Los recuentos son una **instantánea del CI**, no un contador automático. Si cambian las pruebas, actualiza las cifras en los tres READMEs y en el [inventario de badges](docs/BADGES.md) a partir de una ejecución satisfactoria. No declares cobertura sin medirla.
 

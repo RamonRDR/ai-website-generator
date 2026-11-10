@@ -1,12 +1,12 @@
 # Badge inventory and maintenance
 
-This document records the evidence behind the **24 distinct badges** shown in each of the three READMEs. The technology versions are the concrete resolved versions in the feature branch's `package-lock.json`. Counts are a snapshot of successful GitHub Actions run [42505766780](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780) on 2026-11-08.
+This document records the evidence behind the **24 distinct badges** shown in each of the three READMEs. The technology versions are the concrete resolved versions in the feature branch's `package-lock.json`. Counts are a snapshot of successful GitHub Actions run [42845816986](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986) on 2026-11-08.
 
 ## Audit inventory
 
 | Technology or check   | Confirmed version or result | Evidence                                                                   | Included |
 | --------------------- | --------------------------- | -------------------------------------------------------------------------- | -------- |
-| CI                    | branch status               | .github/workflows/ci.yml; PR #1 CI run 42505766780                         | Yes      |
+| CI                    | branch status               | .github/workflows/ci.yml; PR #1 CI run 42845816986                         | Yes      |
 | Node.js               | 24 CI                       | .github/workflows/ci.yml (engines >=22.12.0 in package.json)               | Yes      |
 | TypeScript            | 5.9.3                       | package-lock.json                                                          | Yes      |
 | License               | MIT                         | LICENSE                                                                    | Yes      |
@@ -15,8 +15,8 @@ This document records the evidence behind the **24 distinct badges** shown in ea
 | Zod                   | 4.6.7                       | package-lock.json; src/domain/schema.ts                                    | Yes      |
 | JSZip                 | 3.10.2                      | package-lock.json; src/domain/export.ts                                    | Yes      |
 | OpenAI API            | optional adapter            | src/server/provider.ts; disabled by default; not live-tested               | Yes      |
-| Vitest                | 25 passing                  | CI run 42505766780, npm test (25/25; includes evaluation test)             | Yes      |
-| Playwright E2E        | 3 passing                   | CI run 42505766780, npm run test:e2e (3/3)                                 | Yes      |
+| Vitest                | 32 passing                  | CI run 42845816986, npm test (32/32; includes evaluation test)             | Yes      |
+| Playwright E2E        | 7 passing                   | CI run 42845816986, npm run test:e2e (7/7)                                 | Yes      |
 | React Testing Library | 16.3.3                      | package-lock.json; tests/studio.test.tsx                                   | Yes      |
 | jest-dom              | 6.9.1                       | package-lock.json; tests/setup.ts                                          | Yes      |
 | ESLint                | 9.39.5 checked              | package-lock.json; eslint.config.mjs; CI                                   | Yes      |
@@ -35,9 +35,9 @@ This document records the evidence behind the **24 distinct badges** shown in ea
 
 - `Node.js 24 CI` describes the configured GitHub Actions runner, **not** the minimum engine (`>=22.12.0`).
 - `OpenAI API optional adapter` identifies implemented server-side integration code, **not** a validated paid-provider connection.
-- `Vitest 25 passing` reflects 25 distinct cases across eight files in the baseline successful CI run.
+- `Vitest 32 passing` reflects 32 distinct cases across nine files in the baseline successful CI run.
 - `Demo eval 20 fixtures` means one Vitest evaluation test checks 20 synthetic inputs; the additional `npm run evaluate` re-executes that test and does not add 20 tests to the count.
-- `Playwright E2E 3 passing` is the Chromium browser suite result.
+- `Playwright E2E 7 passing` is the Chromium browser suite result.
 - `Vite`, `Vite React plugin`, `jsdom` and `jest-dom` are direct development dependencies used by the test configuration and tests; they are **not** a separate Vite production app.
 - `Next build passing`, `Typecheck strict passing`, `ESLint checked` and `Prettier checked` are backed by corresponding successful CI steps.
 - The dynamic CI badge is restricted to `feat/structured-website-generator` because the PR is still in draft. **After a permitted merge**, repoint it to `main`; do not display an unverified main-branch passing status.
@@ -58,4 +58,4 @@ The repository does not implement pytest/Python, Tailwind CSS, a database, Postg
 5. Keep the official CI badge branch-specific; verify internal links and run `npm run format:check`, `npm test` and GitHub Actions CI.
 6. Never auto-commit into `main` or claim coverage, paid AI validation, deployments or security certifications without evidence.
 
-Last badge baseline: 25 Vitest passing, 3 Playwright E2E passing, 20 synthetic deterministic fixtures, 0 failures, 0 skips.
+Last badge baseline: 32 Vitest passing, 7 Playwright E2E passing, 20 synthetic deterministic fixtures, 0 failures, 0 skips.

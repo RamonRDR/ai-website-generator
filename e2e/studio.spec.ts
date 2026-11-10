@@ -55,7 +55,7 @@ test("editor preserves spaces, temporary invalid drafts and safe committed value
   await heading.fill("");
   await page.getByLabel("Description").click();
   await expect(heading).toHaveValue("");
-  await expect(page.getByRole("alert")).toBeVisible();
+  await expect(page.locator(".error[role=alert]")).toBeVisible();
   await expect(
     page.frameLocator('iframe[title="Website preview"]').locator("#hero h1"),
   ).toHaveText("A creative studio with spaces");

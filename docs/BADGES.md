@@ -4,32 +4,32 @@ This document records the evidence behind the **24 distinct badges** shown in ea
 
 ## Audit inventory
 
-| Technology or check | Confirmed version or result | Evidence | Included |
-| --- | --- | --- | --- |
-| CI | branch status | .github/workflows/ci.yml; PR #1 CI run 42505766780 | Yes |
-| Node.js | 24 CI | .github/workflows/ci.yml (engines >=22.12.0 in package.json) | Yes |
-| TypeScript | 5.9.3 | package-lock.json | Yes |
-| License | MIT | LICENSE | Yes |
-| Next.js | 16.4.5 | package-lock.json; app/ | Yes |
-| React | 19.3.1 | package-lock.json; src/ui/ | Yes |
-| Zod | 4.6.7 | package-lock.json; src/domain/schema.ts | Yes |
-| JSZip | 3.10.2 | package-lock.json; src/domain/export.ts | Yes |
-| OpenAI API | optional adapter | src/server/provider.ts; disabled by default; not live-tested | Yes |
-| Vitest | 25 passing | CI run 42505766780, npm test (25/25; includes evaluation test) | Yes |
-| Playwright E2E | 3 passing | CI run 42505766780, npm run test:e2e (3/3) | Yes |
-| React Testing Library | 16.3.3 | package-lock.json; tests/studio.test.tsx | Yes |
-| jest-dom | 6.9.1 | package-lock.json; tests/setup.ts | Yes |
-| ESLint | 9.39.5 checked | package-lock.json; eslint.config.mjs; CI | Yes |
-| Prettier | 3.9.10 checked | package-lock.json; .prettierrc.json; CI | Yes |
-| Typecheck | strict passing | tsconfig.json strict=true; CI npm run typecheck | Yes |
-| Next build | passing | CI npm run build | Yes |
-| Demo eval | 20 fixtures | tests/fixtures.ts; tests/evaluation.test.ts (1 Vitest test; not +20 tests) | Yes |
-| Vite | 7.3.7 test tooling | package-lock.json; vitest.config.ts | Yes |
-| jsdom | 27.4.0 | package-lock.json; vitest.config.ts test.environment | Yes |
-| Vite React plugin | 5.2.0 | package-lock.json; vitest.config.ts | Yes |
-| Export | HTML CSS ZIP | src/domain/export.ts | Yes |
-| History | browser local | src/domain/storage.ts | Yes |
-| Preview | sandboxed | src/ui/GeneratorStudio.tsx | Yes |
+| Technology or check   | Confirmed version or result | Evidence                                                                   | Included |
+| --------------------- | --------------------------- | -------------------------------------------------------------------------- | -------- |
+| CI                    | branch status               | .github/workflows/ci.yml; PR #1 CI run 42505766780                         | Yes      |
+| Node.js               | 24 CI                       | .github/workflows/ci.yml (engines >=22.12.0 in package.json)               | Yes      |
+| TypeScript            | 5.9.3                       | package-lock.json                                                          | Yes      |
+| License               | MIT                         | LICENSE                                                                    | Yes      |
+| Next.js               | 16.4.5                      | package-lock.json; app/                                                    | Yes      |
+| React                 | 19.3.1                      | package-lock.json; src/ui/                                                 | Yes      |
+| Zod                   | 4.6.7                       | package-lock.json; src/domain/schema.ts                                    | Yes      |
+| JSZip                 | 3.10.2                      | package-lock.json; src/domain/export.ts                                    | Yes      |
+| OpenAI API            | optional adapter            | src/server/provider.ts; disabled by default; not live-tested               | Yes      |
+| Vitest                | 25 passing                  | CI run 42505766780, npm test (25/25; includes evaluation test)             | Yes      |
+| Playwright E2E        | 3 passing                   | CI run 42505766780, npm run test:e2e (3/3)                                 | Yes      |
+| React Testing Library | 16.3.3                      | package-lock.json; tests/studio.test.tsx                                   | Yes      |
+| jest-dom              | 6.9.1                       | package-lock.json; tests/setup.ts                                          | Yes      |
+| ESLint                | 9.39.5 checked              | package-lock.json; eslint.config.mjs; CI                                   | Yes      |
+| Prettier              | 3.9.10 checked              | package-lock.json; .prettierrc.json; CI                                    | Yes      |
+| Typecheck             | strict passing              | tsconfig.json strict=true; CI npm run typecheck                            | Yes      |
+| Next build            | passing                     | CI npm run build                                                           | Yes      |
+| Demo eval             | 20 fixtures                 | tests/fixtures.ts; tests/evaluation.test.ts (1 Vitest test; not +20 tests) | Yes      |
+| Vite                  | 7.3.7 test tooling          | package-lock.json; vitest.config.ts                                        | Yes      |
+| jsdom                 | 27.4.0                      | package-lock.json; vitest.config.ts test.environment                       | Yes      |
+| Vite React plugin     | 5.2.0                       | package-lock.json; vitest.config.ts                                        | Yes      |
+| Export                | HTML CSS ZIP                | src/domain/export.ts                                                       | Yes      |
+| History               | browser local               | src/domain/storage.ts                                                      | Yes      |
+| Preview               | sandboxed                   | src/ui/GeneratorStudio.tsx                                                 | Yes      |
 
 ## Interpretation
 

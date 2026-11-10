@@ -26,8 +26,8 @@ describe("paid provider guardrails", () => {
     original.sections[2].description = "UNCHANGED_SECTION_SENTINEL";
     const requested = original.sections[1];
     const replacement = { ...requested, title: "Improved hero" };
-    const fetchMock = vi.fn(async (_url: string, _options?: RequestInit) => ({
-      ok: true,
+    const fetchMock = vi.fn(async (url: string, options?: RequestInit) => ({
+      ok: url.includes("openai.com") && options?.method === "POST",
       json: async () => ({
         choices: [{ message: { content: JSON.stringify(replacement) } }],
       }),

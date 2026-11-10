@@ -17,14 +17,14 @@
 [![JSZip: 3.10.2](https://img.shields.io/static/v1?label=JSZip&message=3.10.2&color=5b58b7)](https://stuk.github.io/jszip/)
 [![OpenAI API: optional adapter](https://img.shields.io/static/v1?label=OpenAI%20API&message=optional%20adapter&color=777777)](docs/SECURITY.md)
 
-[![Vitest: 32 passing](https://img.shields.io/static/v1?label=Vitest&message=32%20passing&color=248a3d)](https://vitest.dev/)
-[![Playwright E2E: 7 passing](https://img.shields.io/static/v1?label=Playwright%20E2E&message=7%20passing&color=248a3d)](https://playwright.dev/)
+[![Vitest: 35 passing](https://img.shields.io/static/v1?label=Vitest&message=35%20passing&color=248a3d)](https://vitest.dev/)
+[![Playwright E2E: 8 passing](https://img.shields.io/static/v1?label=Playwright%20E2E&message=8%20passing&color=248a3d)](https://playwright.dev/)
 [![React Testing Library: 16.3.3](https://img.shields.io/static/v1?label=React%20Testing%20Library&message=16.3.3&color=d33c4d)](https://testing-library.com/docs/react-testing-library/intro/)
 [![jest-dom: 6.9.1](https://img.shields.io/static/v1?label=jest-dom&message=6.9.1&color=d33c4d)](https://github.com/testing-library/jest-dom)
 [![ESLint: 9.39.5 checked](https://img.shields.io/static/v1?label=ESLint&message=9.39.5%20checked&color=4b32c3)](https://eslint.org/)
 [![Prettier: 3.9.10 checked](https://img.shields.io/static/v1?label=Prettier&message=3.9.10%20checked&color=f7b93e)](https://prettier.io/)
 [![Typecheck: strict passing](https://img.shields.io/static/v1?label=Typecheck&message=strict%20passing&color=3178c6)](tsconfig.json)
-[![Next build: passing](https://img.shields.io/static/v1?label=Next%20build&message=passing&color=248a3d)](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986)
+[![Next build: passing](https://img.shields.io/static/v1?label=Next%20build&message=passing&color=248a3d)](https://github.com/RamonRDR/ai-website-generator/actions/runs/42848221159)
 [![Demo eval: 20 fixtures](https://img.shields.io/static/v1?label=Demo%20eval&message=20%20fixtures&color=5665a8)](docs/EVALUATION.md)
 [![Vite: 7.3.7 test tooling](https://img.shields.io/static/v1?label=Vite&message=7.3.7%20test%20tooling&color=646cff)](https://vite.dev/)
 [![jsdom: 27.4.0](https://img.shields.io/static/v1?label=jsdom&message=27.4.0&color=556677)](https://github.com/jsdom/jsdom)
@@ -36,7 +36,7 @@
 
 </div>
 
-> **Project status:** MVP implemented on [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1) (open for review, not merged). The reference CI run [42845816986](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986) passed. The CI badge above tracks the feature branch until merge. An initial Codex review identified three issues; fixes are included for the next review. No deployment has been performed.
+> **Project status:** MVP implemented on [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1) (open for review, not merged). The reference CI run [42848221159](https://github.com/RamonRDR/ai-website-generator/actions/runs/42848221159) passed. The CI badge above tracks the feature branch until merge. The five issues raised across two Codex reviews have been addressed and regression-tested; a new review is pending. No deployment has been performed.
 
 ## Overview
 
@@ -132,7 +132,7 @@ npx playwright install chromium
 npm run test:e2e
 ```
 
-**Verified on GitHub Actions run [42845816986](https://github.com/RamonRDR/ai-website-generator/actions/runs/42845816986):** 32/32 Vitest tests passing across 9 files; 7/7 Playwright E2E tests passing; **0 failures, 0 skipped**. `npm run evaluate` separately reruns **one** evaluation test already included in the 32. That test checks **20 synthetic deterministic fixtures**, not 20 additional passing test cases and not the quality of live AI.
+**Verified on GitHub Actions run [42848221159](https://github.com/RamonRDR/ai-website-generator/actions/runs/42848221159):** 35/35 Vitest tests passing across 9 files; 8/8 Playwright E2E tests passing; **0 failures, 0 skipped**. `npm run evaluate` separately reruns **one** evaluation test already included in the 35. That test checks **20 synthetic deterministic fixtures**, not 20 additional passing test cases and not the quality of live AI.
 
 These counts are a **CI snapshot**, not a self-updating count. After adding tests, use a successful CI run to update the same static counters in all three READMEs and [the badge inventory](docs/BADGES.md). Do not claim coverage percentages without measurement.
 

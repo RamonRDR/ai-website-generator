@@ -10,10 +10,10 @@
 - Safe hex palette input only. HTML export filenames are fixed and cannot contain user path segments.
 - Sandboxed iframe without script permissions, with no referrer.
 - Provider key stays server-only and never uses a public-prefixed environment variable.
-- API requests enforce raw size limits and Zod constraints; provider timeout and token cap are explicit.
+- API requests enforce streamed UTF-8 byte limits and Zod constraints: 8,000 bytes for initial generation and 300,000 bytes for regeneration, including multibyte text in otherwise schema-valid sites. The latter accommodates the website's 90,000-UTF-16-code-unit serialized limit plus the instruction envelope. Provider timeout and token caps are explicit.
 - Live generation is disabled until `LLM_ENABLED=true` and a key/model are set on the server.
 - Production live calls require an additional explicit `LLM_ALLOW_PRODUCTION=true`.
-- LLM output is parsed and validated before use; even for live regeneration the server only applies the selected section.
+- LLM output is parsed and validated before use. Live regeneration requests and validates one replacement section only; the server checks its original id/type and retains every other section and site metadata. Live provider behavior is not validated against a paid API.
 - No secrets or raw provider error payloads are returned to clients.
 - GitHub Actions uses minimum read permissions and never requires paid provider secrets.
 

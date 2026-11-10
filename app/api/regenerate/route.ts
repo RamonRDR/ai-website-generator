@@ -1,5 +1,9 @@
 import { NextResponse } from "next/server";
-import { BodyTooLargeError, readLimitedBody } from "@/src/server/request-body";
+import {
+  BodyTooLargeError,
+  MAX_REGENERATION_BODY_BYTES,
+  readLimitedBody,
+} from "@/src/server/request-body";
 import { regenerateDemo } from "@/src/domain/demo";
 import { regenerationInputSchema } from "@/src/domain/schema";
 import { regenerateLive, ProviderError } from "@/src/server/provider";
@@ -8,7 +12,7 @@ export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   try {
-    const raw = await readLimitedBody(request, 110000);
+    const raw = await readLimitedBody(request, MAX_REGENERATION_BODY_BYTES);
     const result = regenerationInputSchema.safeParse(JSON.parse(raw));
     if (!result.success) {
       return NextResponse.json({ error: "Invalid regeneration request." }, { status: 400 });

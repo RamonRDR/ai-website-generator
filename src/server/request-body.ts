@@ -1,3 +1,9 @@
+// The website schema accepts up to 90,000 JSON UTF-16 code units. UTF-8 can
+// require three bytes per unit (e.g. CJK), plus regeneration instructions and
+// a small JSON envelope. 300 KB accommodates every such schema-valid payload
+// while keeping the streamed request bounded.
+export const MAX_REGENERATION_BODY_BYTES = 300_000;
+
 // Stream request bodies with a strict byte ceiling, even for chunked transfers.
 // A Content-Length header is only an early rejection hint, never the sole limit.
 export class BodyTooLargeError extends Error {

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import {
+  sectionSchema,
   websiteSchema,
   type GenerateInput,
   type RegenerateInput,
@@ -40,7 +41,13 @@ const SYSTEM = [
   "Every section must have a distinct lowercase slug id.",
 ].join(" ");
 
-async function completeJson(system: string, user: string): Promise<Website> {
+async function completeJson<S extends z.ZodType>(
+  system: string,
+  user: string,
+  schema: S,
+  schemaName: string,
+  maxCompletionTokens: number,
+): Promise<z.output<S>> {
   const { key, model } = providerConfig();
   const endpoint = "https://api.openai.com/v1/chat/completions";
   let response: Response;
@@ -57,12 +64,12 @@ async function completeJson(system: string, user: string): Promise<Website> {
         response_format: {
           type: "json_schema",
           json_schema: {
-            name: "generated_website",
+            name: schemaName,
             strict: false,
-            schema: z.toJSONSchema(websiteSchema),
+            schema: z.toJSONSchema(schema),
           },
         },
-        max_completion_tokens: 3200,
+        max_completion_tokens: maxCompletionTokens,
       }),
       signal: AbortSignal.timeout(20000),
       cache: "no-store",
@@ -81,7 +88,7 @@ async function completeJson(system: string, user: string): Promise<Website> {
     throw new ProviderError("The provider returned an invalid response.");
   }
   try {
-    return websiteSchema.parse(JSON.parse(content));
+    return schema.parse(JSON.parse(content));
   } catch {
     throw new ProviderError("The provider's website schema failed validation.");
   }
@@ -97,31 +104,50 @@ export async function generateLive(input: GenerateInput): Promise<Website> {
     category: input.category,
     language: input.language,
   });
-  return completeJson(SYSTEM, "Create one website using these requirements: " + user);
+  return completeJson(
+    SYSTEM,
+    "Create one website using these requirements: " + user,
+    websiteSchema,
+    "generated_website",
+    3200,
+  );
 }
 
 export async function regenerateLive(input: RegenerateInput): Promise<Website> {
-  const candidate = await completeJson(
+  const selected = input.site.sections.find((section) => section.id === input.sectionId);
+  if (!selected) throw new ProviderError("The selected section does not exist.", 400);
+
+  // Send only the selected section and concise page context. Never ask the model
+  // to reproduce unchanged content or return a complete website.
+  const replacement = await completeJson(
     SYSTEM +
-      " Change only section " +
-      input.sectionId +
-      " from the provided website. " +
-      "Preserve all other sections and metadata.",
+      " Return exactly one section object. Keep the original section id and type. " +
+      "Use the section schema; never return a website or an array of sections.",
     JSON.stringify({
-      website: input.site,
+      website: {
+        name: input.site.name,
+        description: input.site.description,
+        language: input.site.language,
+        category: input.site.category,
+        theme: input.site.theme,
+      },
+      section: selected,
       instruction: input.instruction,
-      sectionId: input.sectionId,
     }),
+    sectionSchema,
+    "replacement_section",
+    12000,
   );
-  const replacement = candidate.sections.find((section) => section.id === input.sectionId);
-  if (!replacement) throw new ProviderError("The modified section was not returned.");
-  // Enforce server-side scope even if the model ignored the instruction.
+
+  if (replacement.id !== selected.id || replacement.type !== selected.type) {
+    throw new ProviderError("The replacement section id or type does not match.");
+  }
+
+  // Preserve every other section and all site metadata on the server.
   return websiteSchema.parse({
     ...input.site,
     sections: input.site.sections.map((section) =>
-      section.id === input.sectionId
-        ? { ...replacement, id: section.id, type: section.type }
-        : section,
+      section.id === selected.id ? replacement : section,
     ),
   });
 }

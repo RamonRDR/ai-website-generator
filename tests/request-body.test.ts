@@ -4,13 +4,16 @@ import { BodyTooLargeError, readLimitedBody } from "../src/server/request-body";
 function requestFromChunks(chunks: Uint8Array[], headers = new Headers()) {
   let index = 0;
   const cancelled = vi.fn();
-  const stream = new ReadableStream<Uint8Array>({
-    pull(controller) {
-      if (index < chunks.length) controller.enqueue(chunks[index++]);
-      else controller.close();
+  const stream = new ReadableStream<Uint8Array>(
+    {
+      pull(controller) {
+        if (index < chunks.length) controller.enqueue(chunks[index++]);
+        else controller.close();
+      },
+      cancel: cancelled,
     },
-    cancel: cancelled,
-  }, { highWaterMark: 0 });
+    { highWaterMark: 0 },
+  );
   return {
     request: { headers, body: stream } as Request,
     cancelled,

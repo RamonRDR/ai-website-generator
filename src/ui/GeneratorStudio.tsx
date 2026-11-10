@@ -346,9 +346,7 @@ export function GeneratorStudio() {
       ),
     };
     if (applySite(updated)) {
-      setHistory((current) =>
-        addSnapshot(current, makeSnapshot(updated, "Accepted regeneration")),
-      );
+      setHistory((current) => addSnapshot(current, makeSnapshot(updated, "Accepted regeneration")));
       setInstruction("");
       setNotice("Regeneration accepted and versioned.");
     }
@@ -598,7 +596,8 @@ export function GeneratorStudio() {
           <span className="eyebrow">03 / Edit</span>
           <h2 id="editor-heading">Visual editor</h2>
           <p className="lead">
-            Edit content and reorder sections without executing generated code. Text changes apply when you leave each field.
+            Edit content and reorder sections without executing generated code. Text changes apply
+            when you leave each field.
           </p>
           {site ? (
             <>

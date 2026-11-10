@@ -39,7 +39,9 @@ test("health endpoint and download behavior", async ({ page, request }) => {
   expect(download.suggestedFilename()).toBe("website-export.zip");
 });
 
-test("editor preserves spaces, temporary invalid drafts and safe committed values", async ({ page }) => {
+test("editor preserves spaces, temporary invalid drafts and safe committed values", async ({
+  page,
+}) => {
   await page.goto("/");
   await page.getByRole("button", { name: "Generate website" }).click();
 
@@ -48,23 +50,23 @@ test("editor preserves spaces, temporary invalid drafts and safe committed value
   await heading.pressSequentially("A creative studio with spaces");
   await expect(heading).toHaveValue("A creative studio with spaces");
   await page.getByLabel("Description").click();
-  await expect(
-    page.frameLocator('iframe[title="Website preview"]').locator("#hero h1"),
-  ).toHaveText("A creative studio with spaces");
+  await expect(page.frameLocator('iframe[title="Website preview"]').locator("#hero h1")).toHaveText(
+    "A creative studio with spaces",
+  );
 
   await heading.fill("");
   await page.getByLabel("Description").click();
   await expect(heading).toHaveValue("");
   await expect(page.locator(".error[role=alert]")).toBeVisible();
-  await expect(
-    page.frameLocator('iframe[title="Website preview"]').locator("#hero h1"),
-  ).toHaveText("A creative studio with spaces");
+  await expect(page.frameLocator('iframe[title="Website preview"]').locator("#hero h1")).toHaveText(
+    "A creative studio with spaces",
+  );
 
   await heading.fill("Restored valid heading");
   await page.getByLabel("Description").click();
-  await expect(
-    page.frameLocator('iframe[title="Website preview"]').locator("#hero h1"),
-  ).toHaveText("Restored valid heading");
+  await expect(page.frameLocator('iframe[title="Website preview"]').locator("#hero h1")).toHaveText(
+    "Restored valid heading",
+  );
 
   const buttonLink = page.getByLabel("Button link");
   await buttonLink.fill("");

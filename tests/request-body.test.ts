@@ -10,7 +10,7 @@ function requestFromChunks(chunks: Uint8Array[], headers = new Headers()) {
       else controller.close();
     },
     cancel: cancelled,
-  });
+  }, { highWaterMark: 0 });
   return {
     request: { headers, body: stream } as Request,
     cancelled,

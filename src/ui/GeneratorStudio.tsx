@@ -134,11 +134,15 @@ export function GeneratorStudio() {
     // Defer reading browser-only storage until after the initial hydration paint.
     const handle = window.setTimeout(() => {
       const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
-      siteRevision.current += 1;
-      setSite(saved.current);
-      setHistory(saved.history);
-      if (saved.current)
-        setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
+      // A fast generation can finish before this deferred hydration callback.
+      // In that case preserve the newer site instead of restoring stale storage.
+      if (siteRevision.current === 0) {
+        siteRevision.current += 1;
+        setSite(saved.current);
+        setHistory(saved.history);
+        if (saved.current)
+          setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
+      }
       setHydrated(true);
     }, 0);
     return () => window.clearTimeout(handle);

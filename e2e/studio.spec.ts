@@ -128,10 +128,57 @@ test("a regeneration response is discarded if editing finishes while it is pendi
 test("both generation APIs reject oversized bodies with HTTP 413", async ({ request }) => {
   for (const endpoint of ["/api/generate", "/api/regenerate"]) {
     const response = await request.post(endpoint, {
-      data: "x".repeat(endpoint.includes("regenerate") ? 110001 : 8001),
+      data: "x".repeat(endpoint.includes("regenerate") ? 300001 : 8001),
       headers: { "Content-Type": "application/json" },
     });
     expect(response.status()).toBe(413);
     expect(await response.json()).toEqual({ error: "Request too large." });
   }
+});
+
+test("regeneration accepts a schema-valid website with large multibyte text", async ({
+  request,
+}) => {
+  const generation = await request.post("/api/generate", {
+    data: {
+      name: "International Creative Studio",
+      prompt: "An accessible, responsive website for a creative studio",
+      category: "business",
+      theme: "ocean",
+      language: "en",
+      audience: "",
+      goal: "",
+      mode: "demo",
+    },
+  });
+  expect(generation.status()).toBe(200);
+  const { site } = await generation.json();
+  const cjk = "漢".repeat(1500);
+  const sections = Array.from({ length: 18 }, (_, index) => ({
+    ...site.sections[2],
+    id: "section-" + index,
+    description: cjk,
+    items: [
+      { heading: "Service one", text: cjk },
+      { heading: "Service two", text: cjk },
+    ],
+  }));
+  const largeSite = { ...site, sections };
+  const payload = {
+    site: largeSite,
+    sectionId: "section-0",
+    instruction: "Summarize the first section only",
+    mode: "demo",
+  };
+  expect(JSON.stringify(largeSite).length).toBeLessThan(90000);
+  const bytes = Buffer.byteLength(JSON.stringify(payload), "utf8");
+  expect(bytes).toBeGreaterThan(110000);
+  expect(bytes).toBeLessThan(300000);
+
+  const response = await request.post("/api/regenerate", { data: payload });
+  expect(response.status()).toBe(200);
+  const result = await response.json();
+  expect(result.site.sections).toHaveLength(18);
+  expect(result.site.sections[0].description).toBe("Summarize the first section only");
+  expect(result.site.sections[1].description).toBe(cjk);
 });

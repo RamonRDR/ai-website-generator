@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import {
   categories,
   languages,
@@ -49,6 +49,7 @@ function Field({
   onChange,
   multiline = false,
   placeholder,
+  onBlur,
 }: {
   id: string;
   label: string;
@@ -56,6 +57,7 @@ function Field({
   onChange: (value: string) => void;
   multiline?: boolean;
   placeholder?: string;
+  onBlur?: () => void;
 }) {
   return (
     <div className="field">
@@ -65,6 +67,7 @@ function Field({
           id={id}
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
           placeholder={placeholder}
           rows={4}
         />
@@ -74,12 +77,43 @@ function Field({
           type="text"
           value={value}
           onChange={(event) => onChange(event.target.value)}
+          onBlur={onBlur}
           placeholder={placeholder}
         />
       )}
     </div>
   );
 }
+
+// Keep incomplete or whitespace-sensitive edits local until the field is blurred.
+// The website state, preview, history and export only receive schema-validated data.
+function EditableField({
+  id,
+  label,
+  value,
+  onCommit,
+  multiline,
+}: {
+  id: string;
+  label: string;
+  value: string;
+  onCommit: (value: string) => void;
+  multiline?: boolean;
+}) {
+  const [draft, setDraft] = useState(value);
+  return (
+    <Field
+      id={id}
+      label={label}
+      value={draft}
+      onChange={setDraft}
+      onBlur={() => onCommit(draft)}
+      multiline={multiline}
+    />
+  );
+}
+
+type Proposal = { site: Website; sectionId: string; baseRevision: number };
 
 export function GeneratorStudio() {
   const [form, setForm] = useState<GenerateInput>(initialForm);
@@ -89,7 +123,8 @@ export function GeneratorStudio() {
   const [newSectionType, setNewSectionType] = useState<SectionType>("features");
   const [device, setDevice] = useState<"desktop" | "mobile">("desktop");
   const [instruction, setInstruction] = useState("");
-  const [candidate, setCandidate] = useState<Website | null>(null);
+  const [candidate, setCandidate] = useState<Proposal | null>(null);
+  const siteRevision = useRef(0);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -99,6 +134,7 @@ export function GeneratorStudio() {
     // Defer reading browser-only storage until after the initial hydration paint.
     const handle = window.setTimeout(() => {
       const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
+      siteRevision.current += 1;
       setSite(saved.current);
       setHistory(saved.history);
       if (saved.current)
@@ -118,7 +154,18 @@ export function GeneratorStudio() {
   }, [site, history, hydrated]);
 
   const selected = site?.sections.find((section) => section.id === selectedId);
-  const showing = candidate ?? site;
+  const showing =
+    candidate && site
+      ? {
+          ...site,
+          sections: site.sections.map(
+            (section) =>
+              candidate.site.sections.find(
+                (proposed) => proposed.id === candidate.sectionId && section.id === proposed.id,
+              ) ?? section,
+          ),
+        }
+      : site;
   const html = showing ? renderWebsite(showing, selectedId) : "";
 
   const updateForm = <K extends keyof GenerateInput>(key: K, value: GenerateInput[K]) => {
@@ -131,7 +178,12 @@ export function GeneratorStudio() {
       setError(parsed.error.issues[0]?.message || "Website validation failed.");
       return false;
     }
+    siteRevision.current += 1;
     setSite(parsed.data);
+    if (candidate) {
+      setCandidate(null);
+      setNotice("Previous regeneration proposal cleared after an edit.");
+    }
     setError("");
     return true;
   };
@@ -165,6 +217,7 @@ export function GeneratorStudio() {
     try {
       const response = await post<{ site: Website; mode: string }>("/api/generate", form);
       const parsed = websiteSchema.parse(response.site);
+      siteRevision.current += 1;
       setSite(parsed);
       setSelectedId("hero");
       setHistory((current) => addSnapshot(current, makeSnapshot(parsed, "Generated website")));
@@ -231,17 +284,28 @@ export function GeneratorStudio() {
 
   const onRegenerate = async () => {
     if (!site || !selected) return;
+    const baseRevision = siteRevision.current;
+    const sectionId = selected.id;
+    const originalType = selected.type;
     setBusy(true);
     setError("");
     try {
       const response = await post<{ site: Website; mode: string }>("/api/regenerate", {
         site,
         instruction,
-        sectionId: selected.id,
+        sectionId,
         mode: form.mode,
       });
       const valid = websiteSchema.parse(response.site);
-      setCandidate(valid);
+      if (siteRevision.current !== baseRevision) {
+        setNotice("The website changed during regeneration. Request a fresh proposal.");
+        return;
+      }
+      const proposedSection = valid.sections.find((section) => section.id === sectionId);
+      if (!proposedSection || proposedSection.type !== originalType) {
+        throw new Error("The proposal does not contain the selected section.");
+      }
+      setCandidate({ site: valid, sectionId, baseRevision });
       setNotice(
         response.mode === "demo"
           ? "Demo change proposed. Review the preview, then accept or reject."
@@ -255,12 +319,32 @@ export function GeneratorStudio() {
   };
 
   const acceptCandidate = () => {
-    if (!candidate) return;
-    if (applySite(candidate)) {
-      setHistory((current) =>
-        addSnapshot(current, makeSnapshot(candidate, "Accepted regeneration")),
-      );
+    if (!candidate || !site) return;
+    if (siteRevision.current !== candidate.baseRevision) {
       setCandidate(null);
+      setNotice("The website changed. Request a fresh regeneration proposal.");
+      return;
+    }
+    const proposedSection = candidate.site.sections.find(
+      (section) => section.id === candidate.sectionId,
+    );
+    const currentSection = site.sections.find((section) => section.id === candidate.sectionId);
+    if (!proposedSection || !currentSection || proposedSection.type !== currentSection.type) {
+      setCandidate(null);
+      setError("The target section changed. Request a fresh proposal.");
+      return;
+    }
+    // Never replace the full site with an older response snapshot.
+    const updated: Website = {
+      ...site,
+      sections: site.sections.map((section) =>
+        section.id === candidate.sectionId ? proposedSection : section,
+      ),
+    };
+    if (applySite(updated)) {
+      setHistory((current) =>
+        addSnapshot(current, makeSnapshot(updated, "Accepted regeneration")),
+      );
       setInstruction("");
       setNotice("Regeneration accepted and versioned.");
     }
@@ -510,7 +594,7 @@ export function GeneratorStudio() {
           <span className="eyebrow">03 / Edit</span>
           <h2 id="editor-heading">Visual editor</h2>
           <p className="lead">
-            Edit content and reorder sections without executing generated code.
+            Edit content and reorder sections without executing generated code. Text changes apply when you leave each field.
           </p>
           {site ? (
             <>
@@ -606,17 +690,19 @@ export function GeneratorStudio() {
                 <>
                   <div className="separator" />
                   <p className="field-label">Editing: {displayName(selected.type)}</p>
-                  <Field
+                  <EditableField
+                    key={selected.id + "-title-" + selected.title}
                     id="section-title"
                     label="Heading"
                     value={selected.title}
-                    onChange={(value) => updateSection({ title: value })}
+                    onCommit={(value) => updateSection({ title: value })}
                   />
-                  <Field
+                  <EditableField
+                    key={selected.id + "-description-" + selected.description}
                     id="section-description"
                     label="Description"
                     value={selected.description}
-                    onChange={(value) => updateSection({ description: value })}
+                    onCommit={(value) => updateSection({ description: value })}
                     multiline
                   />
                   <label className="checkbox-row">
@@ -629,19 +715,21 @@ export function GeneratorStudio() {
                   </label>
                   {selected.action ? (
                     <>
-                      <Field
+                      <EditableField
+                        key={selected.id + "-action-label-" + selected.action.label}
                         id="action-label"
                         label="Button label"
                         value={selected.action.label}
-                        onChange={(value) =>
+                        onCommit={(value) =>
                           updateSection({ action: { ...selected.action!, label: value } })
                         }
                       />
-                      <Field
+                      <EditableField
+                        key={selected.id + "-action-url-" + selected.action.href}
                         id="action-url"
                         label="Button link"
                         value={selected.action.href}
-                        onChange={(value) =>
+                        onCommit={(value) =>
                           updateSection({ action: { ...selected.action!, href: value } })
                         }
                       />
@@ -684,11 +772,12 @@ export function GeneratorStudio() {
                     />
                   </div>
                   {selected.image && (
-                    <Field
+                    <EditableField
+                      key={selected.id + "-image-alt-" + selected.image.alt}
                       id="section-image-alt"
                       label="Image alternative text"
                       value={selected.image.alt}
-                      onChange={(value) =>
+                      onCommit={(value) =>
                         updateSection({ image: { ...selected.image!, alt: value } })
                       }
                     />
@@ -710,11 +799,12 @@ export function GeneratorStudio() {
                   {selected.items.map((item, index) => (
                     <div key={index} style={{ marginTop: 14 }}>
                       <p className="field-label">Card {index + 1}</p>
-                      <Field
+                      <EditableField
+                        key={selected.id + "-card-" + index + "-heading-" + item.heading}
                         id={"item-heading-" + index}
                         label="Card heading"
                         value={item.heading}
-                        onChange={(value) =>
+                        onCommit={(value) =>
                           updateSection({
                             items: selected.items.map((entry, i) =>
                               i === index ? { ...entry, heading: value } : entry,
@@ -722,11 +812,12 @@ export function GeneratorStudio() {
                           })
                         }
                       />
-                      <Field
+                      <EditableField
+                        key={selected.id + "-card-" + index + "-text-" + item.text}
                         id={"item-text-" + index}
                         label="Card description"
                         value={item.text}
-                        onChange={(value) =>
+                        onCommit={(value) =>
                           updateSection({
                             items: selected.items.map((entry, i) =>
                               i === index ? { ...entry, text: value } : entry,

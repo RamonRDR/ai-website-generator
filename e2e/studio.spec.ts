@@ -228,9 +228,7 @@ test("live-shaped generation selects a hero with a nonstandard id", async ({ pag
   await page.route("**/api/generate", async (route) => {
     const response = await route.fetch();
     const payload = await response.json();
-    const hero = payload.site.sections.find(
-      (section: { type: string }) => section.type === "hero",
-    );
+    const hero = payload.site.sections.find((section: { type: string }) => section.type === "hero");
     hero.id = "main-hero";
     await route.fulfill({ response, json: { ...payload, mode: "live" } });
   });

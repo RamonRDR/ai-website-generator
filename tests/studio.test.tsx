@@ -40,6 +40,50 @@ describe("studio components", () => {
     }
   });
 
+  it("selects a live-generated hero using its type rather than a hard-coded id", async () => {
+    const originalFetch = globalThis.fetch;
+    const site = generateDemo(validInput);
+    site.sections[1].id = "main-hero";
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ site, mode: "live" }),
+    })) as unknown as typeof fetch;
+    try {
+      render(<GeneratorStudio />);
+      fireEvent.click(screen.getByRole("button", { name: "Generate website" }));
+      await waitFor(() => expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title));
+      expect(screen.getByLabelText("Regenerate selected section")).toBeInTheDocument();
+      expect(screen.getByText("Live structured website generated.")).toBeInTheDocument();
+      expect(
+        screen.getByRole("button", { name: /Hero/ }),
+      ).toHaveAttribute("aria-current", "true");
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
+  it("selects an existing editable section when generation has no hero", async () => {
+    const originalFetch = globalThis.fetch;
+    const site = generateDemo(validInput);
+    site.sections = site.sections.filter((section) => section.type !== "hero");
+    globalThis.fetch = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ site, mode: "live" }),
+    })) as unknown as typeof fetch;
+    try {
+      render(<GeneratorStudio />);
+      fireEvent.click(screen.getByRole("button", { name: "Generate website" }));
+      await waitFor(() => expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title));
+      expect(screen.getByLabelText("Regenerate selected section")).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /Features/ })).toHaveAttribute(
+        "aria-current",
+        "true",
+      );
+    } finally {
+      globalThis.fetch = originalFetch;
+    }
+  });
+
   it("generates, edits and saves a deterministic site", async () => {
     const originalFetch = globalThis.fetch;
     const mock = vi.fn(async () => ({

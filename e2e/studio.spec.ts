@@ -223,3 +223,21 @@ test("a browser blocking localStorage still initializes the editor", async ({ pa
   await expect(page.getByText("Version saved to this browser.")).toBeVisible();
   expect(pageErrors).toEqual([]);
 });
+
+test("live-shaped generation selects a hero with a nonstandard id", async ({ page }) => {
+  await page.route("**/api/generate", async (route) => {
+    const response = await route.fetch();
+    const payload = await response.json();
+    const hero = payload.site.sections.find((section: { type: string }) => section.type === "hero");
+    hero.id = "main-hero";
+    await route.fulfill({ response, json: { ...payload, mode: "live" } });
+  });
+
+  await page.goto("/");
+  await page.getByRole("button", { name: "Generate website" }).click();
+  await expect(page.getByLabel("Heading")).toHaveValue("Northstar Studio");
+  await expect(page.getByLabel("Regenerate selected section")).toBeVisible();
+  await expect(page.locator('.section-list button[aria-current="true"]')).toContainText("Hero");
+  await expect(page.frameLocator('iframe[title="Website preview"]').locator("#main-hero")).toHaveCount(1);
+  await expect(page.getByText("Live structured website generated.")).toBeVisible();
+});

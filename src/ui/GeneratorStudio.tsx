@@ -115,6 +115,16 @@ function EditableField({
 
 type Proposal = { site: Website; sectionId: string; baseRevision: number };
 
+// Live models can choose any schema-valid section ID. Prefer a hero by type,
+// then another editable section, and always select an ID that actually exists.
+function initialSectionId(site: Website): string {
+  return (
+    site.sections.find((section) => section.type === "hero")?.id ??
+    site.sections.find((section) => section.type !== "header")?.id ??
+    site.sections[0].id
+  );
+}
+
 export function GeneratorStudio() {
   const [form, setForm] = useState<GenerateInput>(initialForm);
   const [site, setSite] = useState<Website | null>(null);
@@ -147,8 +157,7 @@ export function GeneratorStudio() {
         siteRevision.current += 1;
         setSite(saved.current);
         setHistory(saved.history);
-        if (saved.current)
-          setSelectedId(saved.current.sections[1]?.id ?? saved.current.sections[0].id);
+        if (saved.current) setSelectedId(initialSectionId(saved.current));
       }
       setHydrated(true);
     }, 0);
@@ -230,7 +239,7 @@ export function GeneratorStudio() {
       const parsed = websiteSchema.parse(response.site);
       siteRevision.current += 1;
       setSite(parsed);
-      setSelectedId("hero");
+      setSelectedId(initialSectionId(parsed));
       setHistory((current) => addSnapshot(current, makeSnapshot(parsed, "Generated website")));
       setNotice(
         response.mode === "demo"
@@ -252,7 +261,7 @@ export function GeneratorStudio() {
 
   const restoreVersion = (snapshot: Snapshot) => {
     if (applySite(structuredClone(snapshot.site))) {
-      setSelectedId(snapshot.site.sections[1]?.id ?? snapshot.site.sections[0].id);
+      setSelectedId(initialSectionId(snapshot.site));
       setCandidate(null);
       setNotice("Version restored. Save a checkpoint to keep this revision in history.");
     }

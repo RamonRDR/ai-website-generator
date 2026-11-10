@@ -133,7 +133,14 @@ export function GeneratorStudio() {
   useEffect(() => {
     // Defer reading browser-only storage until after the initial hydration paint.
     const handle = window.setTimeout(() => {
-      const saved = loadState(window.localStorage.getItem(STORAGE_KEY));
+      let stored: string | null = null;
+      try {
+        stored = window.localStorage.getItem(STORAGE_KEY);
+      } catch {
+        // Accessing localStorage or getItem can throw SecurityError under browser policy.
+        // Continue with an empty in-memory state rather than aborting hydration.
+      }
+      const saved = loadState(stored);
       // A fast generation can finish before this deferred hydration callback.
       // In that case preserve the newer site instead of restoring stale storage.
       if (siteRevision.current === 0) {
@@ -170,7 +177,7 @@ export function GeneratorStudio() {
           ),
         }
       : site;
-  const html = showing ? renderWebsite(showing, selectedId) : "";
+  const html = showing ? renderWebsite(showing, selectedId, { preview: true }) : "";
 
   const updateForm = <K extends keyof GenerateInput>(key: K, value: GenerateInput[K]) => {
     setForm((current) => ({ ...current, [key]: value }));

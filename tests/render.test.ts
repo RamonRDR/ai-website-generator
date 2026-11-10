@@ -31,6 +31,17 @@ describe("safe renderer", () => {
     expect(html).toContain("<footer");
   });
 
+  it("resolves preview anchors within srcdoc without changing static exports", () => {
+    const site = generateDemo(validInput);
+    const preview = renderWebsite(site, "hero", { preview: true });
+    const standalone = renderWebsite(site);
+    expect(preview).toContain('<base href="about:srcdoc">');
+    expect(preview).toContain('href="#features"');
+    expect(preview).toContain('href="#contact"');
+    expect(standalone).not.toContain("<base ");
+    expect(standalone).toContain('href="#features"');
+  });
+
   it("rejects unsafe output before rendering", () => {
     const site = generateDemo(validInput);
     site.sections[1].action = { label: "Click", href: "javascript:alert(1)" };

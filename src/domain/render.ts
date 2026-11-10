@@ -112,13 +112,20 @@ export function staticCss(site: Website): string {
   ].join("\n");
 }
 
-export function renderWebsite(site: Website, selectedId?: string): string {
+export function renderWebsite(
+  site: Website,
+  selectedId?: string,
+  options: { preview?: boolean } = {},
+): string {
   const safeSite = websiteSchema.parse(site);
   const lang = safeSite.language === "pt-BR" ? "pt-BR" : safeSite.language;
   return (
     '<!doctype html><html lang="' +
     lang +
     '"><head><meta charset="utf-8">' +
+    // srcDoc otherwise inherits the Studio page's base URL, breaking #section links.
+    // The exported HTML intentionally omits this preview-only base element.
+    (options.preview ? '<base href="about:srcdoc">' : "") +
     '<meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<meta name="description" content="' +
     escapeHtml(safeSite.description.slice(0, 160)) +

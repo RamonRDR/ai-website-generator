@@ -182,3 +182,44 @@ test("regeneration accepts a schema-valid website with large multibyte text", as
   expect(result.site.sections[0].description).toBe("Summarize the first section only");
   expect(result.site.sections[1].description).toBe(cjk);
 });
+
+test("preview section anchors navigate within the generated document", async ({ page }) => {
+  await page.goto("/");
+  await page.getByRole("button", { name: "Generate website" }).click();
+  const preview = page.frameLocator('iframe[title="Website preview"]');
+  await expect(preview.locator("base")).toHaveAttribute("href", "about:srcdoc");
+  await preview.locator('a[href="#features"]').click();
+  await expect
+    .poll(() => preview.locator("html").evaluate(() => window.location.hash))
+    .toBe("#features");
+  await expect(preview.locator("#hero")).toHaveCount(1);
+  await expect(preview.locator("#features")).toHaveCount(1);
+  await preview.locator('a[href="#contact"]').first().click();
+  await expect
+    .poll(() => preview.locator("html").evaluate(() => window.location.hash))
+    .toBe("#contact");
+  await expect(preview.locator("#contact")).toHaveCount(1);
+  expect(new URL(page.url()).pathname).toBe("/");
+});
+
+test("a browser blocking localStorage still initializes the editor", async ({ page }) => {
+  const pageErrors: string[] = [];
+  page.on("pageerror", (error) => pageErrors.push(error.message));
+  await page.addInitScript(() => {
+    Object.defineProperty(window, "localStorage", {
+      configurable: true,
+      get() {
+        throw new DOMException("Storage blocked by policy", "SecurityError");
+      },
+    });
+  });
+  await page.goto("/");
+  await page.getByRole("button", { name: "Generate website" }).click();
+  await expect(page.getByLabel("Heading")).toBeVisible();
+  await page.getByLabel("Heading").fill("Website without local storage");
+  await page.getByLabel("Description").click();
+  await expect(page.getByLabel("Heading")).toHaveValue("Website without local storage");
+  await page.getByRole("button", { name: "Save version" }).click();
+  await expect(page.getByText("Version saved to this browser.")).toBeVisible();
+  expect(pageErrors).toEqual([]);
+});

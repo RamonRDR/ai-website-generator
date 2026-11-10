@@ -228,7 +228,9 @@ test("live-shaped generation selects a hero with a nonstandard id", async ({ pag
   await page.route("**/api/generate", async (route) => {
     const response = await route.fetch();
     const payload = await response.json();
-    const hero = payload.site.sections.find((section: { type: string }) => section.type === "hero");
+    const hero = payload.site.sections.find(
+      (section: { type: string }) => section.type === "hero",
+    );
     hero.id = "main-hero";
     await route.fulfill({ response, json: { ...payload, mode: "live" } });
   });
@@ -238,6 +240,8 @@ test("live-shaped generation selects a hero with a nonstandard id", async ({ pag
   await expect(page.getByLabel("Heading")).toHaveValue("Northstar Studio");
   await expect(page.getByLabel("Regenerate selected section")).toBeVisible();
   await expect(page.locator('.section-list button[aria-current="true"]')).toContainText("Hero");
-  await expect(page.frameLocator('iframe[title="Website preview"]').locator("#main-hero")).toHaveCount(1);
+  await expect(
+    page.frameLocator('iframe[title="Website preview"]').locator("#main-hero"),
+  ).toHaveCount(1);
   await expect(page.getByText("Live structured website generated.")).toBeVisible();
 });

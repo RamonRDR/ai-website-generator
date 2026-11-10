@@ -51,12 +51,12 @@ describe("studio components", () => {
     try {
       render(<GeneratorStudio />);
       fireEvent.click(screen.getByRole("button", { name: "Generate website" }));
-      await waitFor(() => expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title));
+      await waitFor(() =>
+        expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title),
+      );
       expect(screen.getByLabelText("Regenerate selected section")).toBeInTheDocument();
       expect(screen.getByText("Live structured website generated.")).toBeInTheDocument();
-      expect(
-        screen.getByRole("button", { name: /Hero/ }),
-      ).toHaveAttribute("aria-current", "true");
+      expect(screen.getByRole("button", { name: /Hero/ })).toHaveAttribute("aria-current", "true");
     } finally {
       globalThis.fetch = originalFetch;
     }
@@ -73,7 +73,9 @@ describe("studio components", () => {
     try {
       render(<GeneratorStudio />);
       fireEvent.click(screen.getByRole("button", { name: "Generate website" }));
-      await waitFor(() => expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title));
+      await waitFor(() =>
+        expect(screen.getByLabelText("Heading")).toHaveValue(site.sections[1].title),
+      );
       expect(screen.getByLabelText("Regenerate selected section")).toBeInTheDocument();
       expect(screen.getByRole("button", { name: /Features/ })).toHaveAttribute(
         "aria-current",

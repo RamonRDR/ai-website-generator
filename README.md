@@ -1,45 +1,125 @@
-# AI Website Generator
+<div align="center">
 
-[![CI](https://github.com/RamonRDR/ai-website-generator/actions/workflows/ci.yml/badge.svg)](https://github.com/RamonRDR/ai-website-generator/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+# AI Website Generator 🪄
 
-A Next.js and TypeScript website studio that turns natural-language requirements into **validated, responsive page structures**. Generate a website, preview desktop or mobile, edit components, save local versions, propose a scoped regeneration, and export a static ZIP. Designed as a small, auditable full-stack and applied-AI portfolio project.
+**Build responsive, editable websites from structured prompts, safely.**
 
-> **Important:** Demo mode uses deterministic templates, not a language model. Optional live AI uses an explicitly configured provider. No deployment or paid API calls are needed to run the standard test suite.
+[🇺🇸 English](README.md) · [🇧🇷 Português](README.pt-BR.md) · [🇪🇸 Español](README.es.md)
 
-## What works
+[![CI: branch status](https://github.com/RamonRDR/ai-website-generator/actions/workflows/ci.yml/badge.svg?branch=feat%2Fstructured-website-generator)](https://github.com/RamonRDR/ai-website-generator/actions/workflows/ci.yml)
+[![Node.js: 24 CI](https://img.shields.io/static/v1?label=Node.js&message=24%20CI&color=339933)](https://nodejs.org/)
+[![TypeScript: 5.9.3](https://img.shields.io/static/v1?label=TypeScript&message=5.9.3&color=3178c6)](https://www.typescriptlang.org/)
+[![License: MIT](https://img.shields.io/static/v1?label=License&message=MIT&color=2ea44f)](LICENSE)
 
-| Feature                | Approach                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------- |
-| Natural-language input | Prompt, category, project name, audience, goal, theme, language                             |
-| Website categories     | Business, portfolio, institutional, product, services, event, restaurant                    |
-| Structured generation  | Versioned Zod website schema, bounded text and allowlisted sections                         |
-| Built-in themes        | Ocean, Sunset, Forest, Mono; editable safe hex palette                                      |
-| Responsive preview     | Sandboxed iframe; desktop and 390px mobile                                                  |
-| Visual editing         | Headings, descriptions, actions, cards, visibility, ordering, adding/removing sections      |
-| Scoped regeneration    | Candidate changes limited to selected section; accept or reject                             |
-| Version history        | Local browser storage, capped at 15 checkpoints, manual restore                             |
-| Export                 | Standalone HTML, CSS, metadata and instructions packed as ZIP                               |
-| Optional live LLM      | Server-only OpenAI-compatible chat completions with JSON schema output, then Zod validation |
-| Quality                | Vitest, React Testing Library, Playwright, 20 synthetic evaluation prompts, GitHub Actions  |
+[![Next.js: 16.4.5](https://img.shields.io/static/v1?label=Next.js&message=16.4.5&color=111111)](https://nextjs.org/)
+[![React: 19.3.1](https://img.shields.io/static/v1?label=React&message=19.3.1&color=087ea4)](https://react.dev/)
+[![Zod: 4.6.7](https://img.shields.io/static/v1?label=Zod&message=4.6.7&color=3068b7)](https://zod.dev/)
+[![JSZip: 3.10.2](https://img.shields.io/static/v1?label=JSZip&message=3.10.2&color=5b58b7)](https://stuk.github.io/jszip/)
+[![OpenAI API: optional adapter](https://img.shields.io/static/v1?label=OpenAI%20API&message=optional%20adapter&color=777777)](docs/SECURITY.md)
 
-The renderer does not evaluate arbitrary JavaScript, dynamic JSX, user HTML, or model-generated CSS.
+[![Vitest: 25 passing](https://img.shields.io/static/v1?label=Vitest&message=25%20passing&color=248a3d)](https://vitest.dev/)
+[![Playwright E2E: 3 passing](https://img.shields.io/static/v1?label=Playwright%20E2E&message=3%20passing&color=248a3d)](https://playwright.dev/)
+[![React Testing Library: 16.3.3](https://img.shields.io/static/v1?label=React%20Testing%20Library&message=16.3.3&color=d33c4d)](https://testing-library.com/docs/react-testing-library/intro/)
+[![jest-dom: 6.9.1](https://img.shields.io/static/v1?label=jest-dom&message=6.9.1&color=d33c4d)](https://github.com/testing-library/jest-dom)
+[![ESLint: 9.39.5 checked](https://img.shields.io/static/v1?label=ESLint&message=9.39.5%20checked&color=4b32c3)](https://eslint.org/)
+[![Prettier: 3.9.10 checked](https://img.shields.io/static/v1?label=Prettier&message=3.9.10%20checked&color=f7b93e)](https://prettier.io/)
+[![Typecheck: strict passing](https://img.shields.io/static/v1?label=Typecheck&message=strict%20passing&color=3178c6)](tsconfig.json)
+[![Next build: passing](https://img.shields.io/static/v1?label=Next%20build&message=passing&color=248a3d)](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780)
+[![Demo eval: 20 fixtures](https://img.shields.io/static/v1?label=Demo%20eval&message=20%20fixtures&color=5665a8)](docs/EVALUATION.md)
+[![Vite: 7.3.7 test tooling](https://img.shields.io/static/v1?label=Vite&message=7.3.7%20test%20tooling&color=646cff)](https://vite.dev/)
+[![jsdom: 27.4.0](https://img.shields.io/static/v1?label=jsdom&message=27.4.0&color=556677)](https://github.com/jsdom/jsdom)
+[![Vite React plugin: 5.2.0](https://img.shields.io/static/v1?label=Vite%20React%20plugin&message=5.2.0&color=7567b7)](https://github.com/vitejs/vite-plugin-react)
 
-## Quick start
+[![Export: HTML CSS ZIP](https://img.shields.io/static/v1?label=Export&message=HTML%20CSS%20ZIP&color=31649a)](docs/EXPORT.md)
+[![History: browser local](https://img.shields.io/static/v1?label=History&message=browser%20local&color=31649a)](docs/architecture.md)
+[![Preview: sandboxed](https://img.shields.io/static/v1?label=Preview&message=sandboxed&color=31649a)](docs/SECURITY.md)
 
-Prerequisites: Node.js 22.12+ (Node 24 recommended), npm.
+</div>
+
+> **Project status:** MVP implemented on [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1) (draft, not merged). The reference CI run [42505766780](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780) passed. The CI badge above tracks the feature branch until merge. No Codex review or deployment has been performed.
+
+## Overview
+
+A Next.js and strict-TypeScript studio for creating websites from natural-language requirements. Pages are **validated data structures**, not executable code generated by an LLM. It demonstrates frontend development, secure rendering, optional applied AI, automated tests and static export.
+
+**Demo mode uses deterministic templates, not a real AI model.** Live AI is an opt-in server-side adapter and has not been verified with paid provider requests.
+
+## Implemented features
+
+- Seven website categories: business, portfolio, institutional, product, services, event and restaurant.
+- Input fields for prompt, project name, audience, goal, language, website category and visual theme.
+- Four visual themes: Ocean, Sunset, Forest and Mono, with validated, editable hexadecimal colors.
+- Versioned Zod schema and eleven allowed sections: `header`, `hero`, `features`, `about`, `services`, `pricing`, `testimonials`, `faq`, `cta`, `contact` and `footer`.
+- Safe HTML renderer with responsive layout, descriptive metadata and a sandboxed desktop/mobile (390 px) iframe.
+- Form-based editor for headings, descriptions, buttons, links, cards, approved images, visibility, section insertion, removal and reordering.
+- Section-scoped regeneration with candidate preview and explicit acceptance or rejection.
+- Up to 15 local browser history checkpoints, restore operation and a basic comparison against the latest checkpoint.
+- Static ZIP containing `index.html`, `styles.css`, `metadata.json` and an export `README.md`.
+- Optional OpenAI chat-completions adapter, disabled by default and not claimed as a verified live integration.
+
+## Technology stack
+
+**Runtime:** Node.js >=22.12.0; the CI runner uses Node.js **24**. **Application:** Next.js **16.4.5**, React **19.3.1**, TypeScript **5.9.3** (strict), Zod **4.6.7** and JSZip **3.10.2**. **Testing:** Vitest **3.2.7**, Playwright **1.65.0**, React Testing Library **16.3.3**, jest-dom **6.9.1**, Vite **7.3.7**, Vite React plugin **5.2.0** and jsdom **27.4.0**. **Quality:** ESLint **9.39.5**, Prettier **3.9.10** and GitHub Actions.
+
+Versions are resolved from the committed `package-lock.json`, not assumed from the dependency ranges in `package.json`. No Tailwind CSS, database, Redis, Docker, MCP server or cloud deployment is implemented.
+
+## Architecture
+
+```mermaid
+flowchart LR
+    UI[Next.js studio] --> API[Next.js API routes]
+    API --> DEMO[Deterministic demo]
+    API --> LLM[Optional server-side LLM]
+    DEMO --> SCHEMA[Zod website schema]
+    LLM --> SCHEMA
+    SCHEMA --> MODEL[Structured site JSON]
+    MODEL --> PREVIEW[Sandboxed responsive preview]
+    MODEL --> EDIT[Structured editor and local history]
+    MODEL --> EXPORT[Static HTML CSS ZIP]
+```
+
+`src/domain/schema.ts` defines the trust boundary. `src/domain/render.ts` escapes user content and creates a fixed layout. The iframe has no script permission. `src/domain/export.ts` only emits fixed safe filenames; `src/domain/storage.ts` validates locally saved sites. The optional LLM provider is isolated in `src/server/provider.ts`. Additional detail: [architecture](docs/architecture.md) and [technical decisions](docs/DECISIONS.md).
+
+## Prerequisites
+
+Node.js **22.12+**, npm and a modern browser. Node 24 is used in GitHub Actions. No server database, extra backend process, cloud account or paid API key is needed for demo mode.
+
+## Installation and configuration
 
 ```bash
 git clone https://github.com/RamonRDR/ai-website-generator.git
 cd ai-website-generator
-npm install
+npm ci
 cp .env.example .env.local
 npm run dev
 ```
 
-Open http://localhost:3000. Choose **Demo · Free, deterministic** and click **Generate website**.
+The sample environment file is safe for demo mode. On Windows PowerShell, use `Copy-Item .env.example .env.local` instead of `cp` if preferred. For an intentionally configured, potentially paid live adapter, set the following **only in the private server environment**:
 
-For production-like verification:
+```dotenv
+LLM_ENABLED=true
+LLM_API_KEY=your_private_server_key
+LLM_MODEL=your_supported_json_schema_model
+```
+
+Live requests target the fixed official OpenAI HTTPS chat-completions endpoint and require a model supporting `json_schema`. In production, an additional `LLM_ALLOW_PRODUCTION=true` flag is required. **Do not enable paid generation on a public deployment without authentication, quotas and rate limiting**; those safeguards are not included in this MVP.
+
+## Run and example workflow
+
+Open `http://localhost:3000` after `npm run dev`. Select **Demo · Free, deterministic**, enter a business name and description, choose a category/theme, then click **Generate website**. Toggle Desktop/Mobile, edit a section, save a checkpoint, propose a regeneration, accept or reject it, restore a version and export the ZIP.
+
+Example prompt: “Create a minimalist portfolio for a freelance web developer, with services and a clear contact CTA.” The demo uses category-based fixture copy, **not semantic live AI generation**. More examples: [prompt library](docs/PROMPTS.md).
+
+## Web interface and API routes
+
+- `GET /`: responsive Studio interface.
+- `GET /api/health`: simple application health response (not a database readiness check).
+- `POST /api/generate`: validated site generation in demo mode or with the explicitly enabled live adapter.
+- `POST /api/regenerate`: validated, selected-section regeneration proposal.
+
+The API is internal to the application. There is **no OpenAPI/Swagger UI**, public SaaS authentication or externally published API service. See [schemas](docs/SCHEMA.md).
+
+## Automated tests
 
 ```bash
 npm run lint
@@ -47,91 +127,49 @@ npm run typecheck
 npm test
 npm run evaluate
 npm run build
+npm run format:check
 npx playwright install chromium
 npm run test:e2e
-npm run format:check
 ```
 
-Playwright launches a local server automatically. The app has no separate database or backend process.
+**Verified on GitHub Actions run [42505766780](https://github.com/RamonRDR/ai-website-generator/actions/runs/42505766780):** 25/25 Vitest tests passing across 8 files; 3/3 Playwright E2E tests passing; **0 failures, 0 skipped**. `npm run evaluate` separately reruns **one** evaluation test already included in the 25. That test checks **20 synthetic deterministic fixtures**, not 20 additional passing test cases and not the quality of live AI.
 
-## Optional live AI (costs may apply)
+These counts are a **CI snapshot**, not a self-updating count. After adding tests, use a successful CI run to update the same static counters in all three READMEs and [the badge inventory](docs/BADGES.md). Do not claim coverage percentages without measurement.
 
-All live calls are **disabled** by default. Set the following in your **server-only** `.env.local` if you intentionally want to test live generation:
+## GitHub Actions
 
-```dotenv
-LLM_ENABLED=true
-LLM_API_KEY=your_private_server_key
-LLM_MODEL=your_supported_model
-```
+`.github/workflows/ci.yml` runs on GitHub-hosted Ubuntu runners with read-only permissions. The quality job verifies ESLint, strict TypeScript typechecking, Vitest, deterministic evaluation, Next.js build and Prettier; the browser job runs Playwright with Chromium. Installation uses the committed lockfile through `npm ci`. No user computer, API key, paid calls, automatic deployment or automatic merge is required.
 
-The initial adapter targets the official OpenAI chat completions endpoint over HTTPS. A model compatible with `json_schema` responses is required. The API credential is never exposed via `NEXT_PUBLIC_*` or sent to the browser. Live mode remains disabled in production unless `LLM_ALLOW_PRODUCTION=true` is explicitly set. **This MVP has no authentication or public API rate limiting: do not enable paid generation on a public deployment without adding authentication, quotas and rate limiting.** The adapter makes a single bounded request, with a 20-second timeout and token cap; it does not retry automatically.
+## Security
 
-No live provider calls occur in unit tests, browser tests, builds or CI.
-
-## Typical workflow
-
-1. Describe the site and choose category, theme and language.
-2. Generate a deterministic draft (or choose configured live AI).
-3. Inspect the sandboxed preview in desktop and mobile modes.
-4. Select a section, edit texts, buttons, cards and theme colors.
-5. Add, hide, reorder or remove components.
-6. Save checkpoints. Restore a version from history when needed.
-7. Request a scoped change and accept or reject the candidate after previewing it.
-8. Export `website-export.zip`, extract it and open `index.html` locally.
-
-## Architecture
-
-```mermaid
-flowchart LR
-    UI[Next.js Studio] --> API[Server routes]
-    API --> DEMO[Deterministic demo]
-    API --> LLM[Opt-in LLM adapter]
-    DEMO --> ZOD[Zod validation]
-    LLM --> ZOD
-    ZOD --> STATE[Website JSON]
-    STATE --> PREVIEW[Safe HTML renderer / sandboxed iframe]
-    STATE --> EDITOR[Structured editor]
-    STATE --> HISTORY[Local browser versions]
-    STATE --> ZIP[Static HTML/CSS ZIP]
-```
-
-`src/domain/schema.ts` is the single source of truth for website data. `src/domain/render.ts` produces escaped HTML and constrained CSS variables; the iframe is sandboxed with no script permission. `src/domain/export.ts` reuses the renderer and produces a fixed file list, so user input cannot select paths.
-
-## Component catalog
-
-`header`, `hero`, `features`, `about`, `services`, `pricing`, `testimonials`, `faq`, `cta`, `contact`, `footer`.
-
-All components have bounded text, optional safe buttons and cards. Only HTTPS images from the explicitly approved hosts can be stored. Demo templates use placeholders rather than invented business facts, reviews, phone numbers or addresses.
-
-## Validation and security
-
-Prompt length is limited, unknown schema keys are rejected, section types are allowlisted, all URLs are validated, colors must be hex, HTML special characters are escaped, and generated scripts are never run. The server treats LLM output as untrusted data, applies Zod validation and enforces selected-section-only regeneration. API requests have size caps. Errors are returned without logging credentials or raw provider responses. Generated content is not auto-published.
-
-See [security model](docs/SECURITY.md), [schema reference](docs/SCHEMA.md), [architecture](docs/architecture.md) and [decisions](docs/DECISIONS.md).
-
-## Tests and evaluation
-
-Vitest covers schema validity, link and injection defenses, deterministic generation, isolated regeneration, safe renderer, ZIP integrity, local history and provider opt-in. React Testing Library covers Studio behavior; Playwright covers main browser flows. The 20 synthetic prompts are deterministic regression fixtures, not evidence of live model accuracy. CI runs on GitHub-hosted runners and requires no paid credentials. Actual check status is displayed by the badge above.
-
-See [testing guide](docs/TESTING.md) and [evaluation method](docs/EVALUATION.md).
-
-## Documentation
-
-- [Prompt examples](docs/PROMPTS.md)
-- [Export instructions](docs/EXPORT.md)
-- [Schema catalog](docs/SCHEMA.md)
-- [Architecture](docs/architecture.md)
-- [Technical decisions](docs/DECISIONS.md)
-- [Security](docs/SECURITY.md)
-- [Testing](docs/TESTING.md)
-- [Evaluation](docs/EVALUATION.md)
-- [README em português](README.pt-BR.md)
-- [README en español](README.es.md)
+Strict Zod schemas limit component types, links, images, text, palette and prompt size. HTML is escaped, scripts/JSX and raw AI-generated HTML are not executed, the iframe is sandboxed, provider keys remain server-side, and ZIP paths cannot depend on user input. Untrusted or invalid model output is rejected. Details and caveats: [security model](docs/SECURITY.md).
 
 ## Known limitations
 
-This is an intentionally bounded MVP, not a clone of commercial code-generation products. Demo mode is template-based; live results depend on a user-provided paid API and schema-capable model. The output is a static HTML/CSS site, not a deployed React/Next.js application. The editor uses structured controls rather than drag-and-drop. History is local to one browser and is not cross-device synced. Generated facts, accessibility and SEO require human review before publishing. There is no authentication, billing, collaboration or automatic deployment. Screenshots and live deployment URLs are intentionally omitted until they genuinely exist.
+The demo is template-based; paid live LLM operation is **not verified**. The project has no drag-and-drop editor, cross-device history sync, multi-user collaboration, authentication, public rate limiting, database, payments or deployment. The ZIP exports static HTML/CSS, not a full Next.js application. Human review is needed for factual claims, image rights, accessibility and SEO. No WCAG certification, measured code coverage, screenshots or live URL is claimed.
+
+## Repository structure
+
+- `app/`: Next.js application, Studio page and API routes.
+- `src/domain/`: schemas, themes, deterministic demo, renderer, versioning and export.
+- `src/server/`: optional server-side AI provider adapter.
+- `src/ui/`: responsive editor/preview experience.
+- `tests/` and `e2e/`: unit/component, deterministic evaluation and Chromium E2E tests.
+- `docs/`: architecture, schema, security, testing, evaluation, decisions and badge evidence.
+- `.github/workflows/ci.yml`: automatic checks (no deployment).
+
+## Possible future improvements
+
+Optional future work includes verified provider evaluation, accessibility audits, stronger rate limiting/authentication before public paid use, editable project import and more sophisticated visual editing. **None of these are represented as implemented.**
+
+## Contributions
+
+Issues and focused pull requests are welcome. For changes, run the checks above and preserve the bounded structured-renderer security model. The project is presently under review in [PR #1](https://github.com/RamonRDR/ai-website-generator/pull/1); the `main` branch is not updated without owner approval.
+
+## Documentation
+
+[architecture](docs/architecture.md) · [schemas](docs/SCHEMA.md) · [security](docs/SECURITY.md) · [tests](docs/TESTING.md) · [evaluation](docs/EVALUATION.md) · [prompt examples](docs/PROMPTS.md) · [export](docs/EXPORT.md) · [decisions](docs/DECISIONS.md) · [badge inventory](docs/BADGES.md)
 
 ## License
 
-[MIT](LICENSE) © 2026 Ramon Rodriguez.
+[MIT License](LICENSE) © 2026 Ramon Rodriguez.
